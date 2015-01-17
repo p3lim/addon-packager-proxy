@@ -26,5 +26,6 @@
 			"description": "Number of seconds between each attempt to query CurseForge.\nMin: 30, Max: 300.",
 			"value": 60
 		}
-	}
+	},
+	"addons": ["papertrail:choklad"]
 }
