@@ -69,7 +69,7 @@ app.post('/webhook', function(req, res, next){
 
 function signatureMatch(signature, data){
 	var computed = 'sha1=' + crypto.createHmac('sha1', process.env.SECRET_KEY).update(data).digest('hex');
-	return computed === signature;
+	return computed == signature;
 }
 
 request({
