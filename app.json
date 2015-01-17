@@ -9,8 +9,7 @@
 			"description": "ID of a gist containing a JSON array of project info. More info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
 		},
 		"SECRET_KEY": {
-			"description": "A secret key used for GitHub webhooks.",
-			"generator": "secret"
+			"description": "A secret key used for GitHub webhooks. Treat this like a password.",
 		},
 		"WOWI_USERNAME": {
 			"description": "Your username on WowInterface.com."
