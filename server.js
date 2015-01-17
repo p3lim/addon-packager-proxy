@@ -16,7 +16,7 @@ app.get('/', function(req, res){
 	res.redirect('https://github.com/p3lim/addon-packager-proxy/wiki/Setup');
 });
 
-app.post('/webhook', function(req, res, next){
+app.post('/', function(req, res, next){
 	if(!req.headers['x-github-delivery'])
 		return Log.error(Strings.WEBHOOK_NO_DELIVERY);
 
