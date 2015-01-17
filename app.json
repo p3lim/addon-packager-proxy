@@ -1,0 +1,30 @@
+{
+	"name": "Addon Packager Proxy",
+	"description": "Turns GitHub tags into WowInterface uploads through CurseForce and magic!",
+	"repository": "https://github.com/p3lim/addon-packager-proxy",
+	"logo": "https://avatars1.githubusercontent.com/u/5995145",
+	"success_url": "https://github.com/p3lim/addon-packager-proxy/wiki/Setup",
+	"env": {
+		"PROJECT_LIST": {
+			"description": "Link to a gist containing a JSON array of project info.\nMore info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
+		},
+		"SECRET_KEY": {
+			"description": "A secret key used for GitHub webhooks.",
+			"generator": "secret"
+		},
+		"WOWI_USERNAME": {
+			"description": "Your username on WowInterface.com."
+		},
+		"WOWI_PASSWORD": {
+			"description": "Your password on WowInterface.com."
+		},
+		"QUERY_MAX_ATTEMPTS": {
+			"description": "Number of attempts to query CurseForge for an updated file.\nMin: 2, Max: 10.",
+			"value": 3
+		},
+		"QUERY_DELAY_SECONDS": {
+			"description": "Number of seconds between each attempt to query CurseForge.\nMin: 30, Max: 300.",
+			"value": 60
+		}
+	}
+}

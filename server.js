@@ -1,16 +1,3 @@
-if(!process.env.WOWI_USERNAME)
-	throw 'Missing environment variable "WOWI_USERNAME"';
-
-if(!process.env.WOWI_PASSWORD)
-	throw 'Missing environment variable "WOWI_PASSWORD"';
-
-if(!process.env.SECRET_KEY)
-	throw 'Missing environment variable "SECRET_KEY"';
-
-if(!process.env.PROJECT_LIST)
-	throw 'Missing environment variable "PROJECT_LIST"';
-
-
 var bl = require('bl'),
 	crypto = require('crypto'),
 	express = require('express'),
