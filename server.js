@@ -10,6 +10,8 @@ var Log = require('./utils').Log,
 	Strings = require('./utils').Strings,
 	Packager = require('./packager');
 
+app.listen(process.env.PORT || 5000);
+
 app.get('/', function(req, res){
 	res.send('Nothing to see here, move along!');
 });
