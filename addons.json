@@ -1,2 +1,50 @@
 [
+	{
+		"path": "oUF_P3lim",
+		"repo": "oUF_P3lim",
+		"curse": "ouf-p3lim",
+		"wowi": "8455"
+	},
+	{
+		"path": "oUF_Experience",
+		"repo": "oUF_Experience",
+		"curse": "ouf-experience",
+		"wowi": "10647"
+	},
+	{
+		"path": "oUF_Reputation",
+		"repo": "oUF_Reputation",
+		"curse": "ouf-reputation",
+		"wowi": "12017"
+	},
+	{
+		"path": "Broker_Equipment",
+		"repo": "Broker_Equipment",
+		"curse": "broker-equipment",
+		"wowi": "12641"
+	},
+	{
+		"path": "Molinari",
+		"repo": "Molinari",
+		"curse": "molinari",
+		"wowi": "13188"
+	},
+	{
+		"path": "QuickQuest",
+		"repo": "QuickQuest",
+		"curse": "quickquest",
+		"wowi": "20838"
+	},
+	{
+		"path": "BonusRollPreview",
+		"repo": "BonusRollPreview",
+		"curse": "bonusrollpreview",
+		"wowi": "22213"
+	},
+	{
+		"path": "LibProcessable",
+		"repo": "LibProcessable",
+		"curse": "libprocessable",
+		"wowi": "23440"
+	}
 ]
