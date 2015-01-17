@@ -6,7 +6,7 @@
 	"success_url": "https://github.com/p3lim/addon-packager-proxy/wiki/Setup",
 	"env": {
 		"PROJECT_LIST": {
-			"description": "Link to a gist containing a JSON array of project info.\nMore info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
+			"description": "Link to a gist containing a JSON array of project info. More info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
 		},
 		"SECRET_KEY": {
 			"description": "A secret key used for GitHub webhooks.",
@@ -19,11 +19,11 @@
 			"description": "Your password on WowInterface.com."
 		},
 		"QUERY_MAX_ATTEMPTS": {
-			"description": "Number of attempts to query CurseForge for an updated file.\nMin: 2, Max: 10.",
+			"description": "Number of attempts to query CurseForge for an updated file. Min: 2, Max: 10.",
 			"value": 3
 		},
 		"QUERY_DELAY_SECONDS": {
-			"description": "Number of seconds between each attempt to query CurseForge.\nMin: 30, Max: 300.",
+			"description": "Number of seconds between each attempt to query CurseForge. Min: 30, Max: 300.",
 			"value": 60
 		}
 	},
