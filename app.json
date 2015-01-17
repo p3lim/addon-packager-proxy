@@ -20,11 +20,11 @@
 		},
 		"QUERY_MAX_ATTEMPTS": {
 			"description": "Number of attempts to query CurseForge for an updated file. Min: 2, Max: 10.",
-			"value": 3
+			"value": "3"
 		},
 		"QUERY_DELAY_SECONDS": {
 			"description": "Number of seconds between each attempt to query CurseForge. Min: 30, Max: 300.",
-			"value": 60
+			"value": "60"
 		}
 	},
 	"addons": ["papertrail:choklad"]
