@@ -1,9 +1,15 @@
 module.exports = {
 	// GitHub Webhook
-	'WEBHOOK_INCORRECT_TYPE': 'Webhook received, but the ref type was "%s".',
-	'WEBHOOK_RECEIVED_PROCEED': 'Webhook received for addon "%s" version "%s", starting process.',
-	'WEBHOOK_RECEIVED_UNKNOWN': 'Webhook received for unknown addon "%s".',
-	'WEBHOOK_ERROR_MESSAGE': 'Webhook: %s',
+	'WEBHOOK_NO_DELIVERY': 'No delivery ID.',
+	'WEBHOOK_NO_SECRET': 'No secret.',
+	'WEBHOOK_NO_EVENT': 'No event.',
+	'WEBHOOK_SIGN_MISMATCH': 'Signatures did not match.',
+	'WEBHOOK_SYNTAX_ERROR': 'Payload contained syntax errors.',
+	'WEBHOOK_PING_MESSAGE': 'Ping: %s',
+	'WEBHOOK_EVENT_MISMATCH': 'Invalid event "%s".',
+	'WEBHOOK_REF_MISMATCH': 'Invalid ref "%s".',
+	'WEBHOOK_REPO_MISMATCH': 'Repository "%s" is not tracked.',
+	'WEBHOOK_RECEIVED_MESSAGE': 'Received event for "%s" version "%s".',
 
 	// Gist
 	'GIST_NOT_FOUND': 'Could not find gist "%s".',
@@ -31,4 +37,5 @@ module.exports = {
 
 	// Misc
 	'CONNECTION_ERROR': 'Failed to connect to "%s".',
+	'ERROR_MESSAGE': '%s: %s'
 }

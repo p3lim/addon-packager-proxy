@@ -10,45 +10,77 @@ if(!process.env.GITHUB_SECRET)
 if(!process.env.PROJECT_LIST)
 	throw 'Missing environment variable "PROJECT_LIST"';
 
-var request = require('request');
+var bl = require('bl'),
+	crypto = require('crypto'),
+	express = require('express'),
+	request = require('request');
 
-var projects = {};
+var app = express(),
+	projects = {};
 
 var Log = require('./utils').Log,
 	Strings = require('./utils').Strings,
-	Handler = require('./handler');
+	Packager = require('./packager');
 
-var handler = require('github-webhook-handler')({
-	secret: process.env.GITHUB_SECRET,
-	path: '/'
+app.get('/', function(req, res){
+	res.send('Nothing to see here, move along!');
 });
 
-handler.on('create', function(event){
-	if(event.payload.ref_type != 'tag')
-		Log.info(Strings.WEBHOOK_INCORRECT_TYPE.replace('%s', event.payload.ref_type));
-	else {
-		var name = event.payload.repository.name;
-		var details = projects[name];
-		if(details){
-			Log.info(Strings.WEBHOOK_RECEIVED_PROCEED.replace('%s', name).replace('%s', event.payload.ref));
+app.post('/webhook', function(req, res, next){
+	if(!req.headers['x-github-delivery'])
+		return Log.error(Strings.WEBHOOK_NO_DELIVERY); // Missing delivery ID
 
-			details.tag = event.payload.ref;
-			new Packager(details);
-		} else
-			Log.info(Strings.WEBHOOK_RECEIVED_UNKNOWN.replace('%s', name));
-	}
+	var signature = req.headers['x-hub-signature'],
+		event = req.headers['x-github-event'];
+
+	if(!signature)
+		return Log.error(Strings.WEBHOOK_NO_SECRET); // Missing secret
+
+	if(!event)
+		return Log.error(Strings.WEBHOOK_NO_EVENT); // Missing event
+
+	req.pipe(bl(function(err, data){
+		if(err)
+			return Log.error(Strings.ERROR_MESSAGE.replace('%s', 'Webhook').replace('%s', err.message));
+
+		if(signatureMatch(signature, data))
+			return Log.error(Strings.WEBHOOK_SIGN_MISMATCH); // Incorrect secret
+
+		try {
+			res.payload = JSON.parse(data.toString());
+		} catch(err){
+			return Log.error(Strings.WEBHOOK_SYNTAX_ERROR); // Syntax error
+		}
+
+		res.event = event;
+
+		next();
+	}));
+}, function(req, res){
+	if(res.event === 'ping'){
+		return Log.info(Strings.WEBHOOK_PING_MESSAGE.replace('%s', res.payload.zen));
+
+	if(res.event !== 'create')
+		return Log.info(Strings.WEBHOOK_EVENT_MISMATCH.replace('%s', res.event));
+
+	if(res.payload.ref_type !== 'tag')
+		return Log.info(Strings.WEBHOOK_REF_MISMATCH.replace('%s', res.payload.ref_type));
+
+	var name = res.payload.repository.name;
+	var details = projects[name];
+	if(!details)
+		return Log.info(Strings.WEBHOOK_REPO_MISMATCH.replace('%s', name));
+
+	Log.info(Strings.WEBHOOK_RECEIVED_MESSAGE.replace('%s', name).replace('%s', res.payload.ref));
+
+	details.tag = res.payload.ref;
+	new Packager(details);
 });
 
-handler.on('error', function(err){
-	Log.error(Strings.WEBHOOK_ERROR_MESSAGE.replace('%s', err.message));
-});
-
-require('http').createServer(function(req, res){
-	handler(req, res, function(err){
-		res.statusCode = 404;
-		res.end('Nothing to see here, move along!');
-	});
-}).listen(process.env.PORT);
+function signatureMatch(signature, data){
+	var computed = 'sha1=' + crypto.createHmac('sha1', signature).update(data).digest('hex');
+	return computed === signature;
+}
 
 request({
 	url: 'https://api.github.com/gists/' + process.env.PROJECT_LIST,
