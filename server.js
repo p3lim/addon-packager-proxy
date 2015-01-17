@@ -28,28 +28,28 @@ app.get('/', function(req, res){
 
 app.post('/webhook', function(req, res, next){
 	if(!req.headers['x-github-delivery'])
-		return Log.error(Strings.WEBHOOK_NO_DELIVERY); // Missing delivery ID
+		return Log.error(Strings.WEBHOOK_NO_DELIVERY);
 
 	var signature = req.headers['x-hub-signature'],
 		event = req.headers['x-github-event'];
 
 	if(!signature)
-		return Log.error(Strings.WEBHOOK_NO_SECRET); // Missing secret
+		return Log.error(Strings.WEBHOOK_NO_SECRET);
 
 	if(!event)
-		return Log.error(Strings.WEBHOOK_NO_EVENT); // Missing event
+		return Log.error(Strings.WEBHOOK_NO_EVENT);
 
 	req.pipe(bl(function(err, data){
 		if(err)
 			return Log.error(Strings.ERROR_MESSAGE.replace('%s', 'Webhook').replace('%s', err.message));
 
 		if(signatureMatch(signature, data))
-			return Log.error(Strings.WEBHOOK_SIGN_MISMATCH); // Incorrect secret
+			return Log.error(Strings.WEBHOOK_SIGN_MISMATCH);
 
 		try {
 			res.payload = JSON.parse(data.toString());
 		} catch(err){
-			return Log.error(Strings.WEBHOOK_SYNTAX_ERROR); // Syntax error
+			return Log.error(Strings.WEBHOOK_SYNTAX_ERROR);
 		}
 
 		res.event = event;
