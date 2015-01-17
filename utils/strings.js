@@ -37,5 +37,7 @@ module.exports = {
 
 	// Misc
 	'CONNECTION_ERROR': 'Failed to connect to "%s".',
-	'ERROR_MESSAGE': '%s: %s'
+	'ERROR_MESSAGE': '%s: %s',
+	'SIGN_PROVIDED': 'Signature provided: %s',
+	'SIGN_COMPUTED': 'Signature computed: %s',
 }
