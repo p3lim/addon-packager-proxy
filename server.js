@@ -45,7 +45,7 @@ app.post('/webhook', function(req, res, next){
 		next();
 	}));
 }, function(req, res){
-	if(res.event === 'ping'){
+	if(res.event === 'ping')
 		return Log.info(Strings.WEBHOOK_PING_MESSAGE.replace('%s', res.payload.zen));
 
 	if(res.event !== 'create')

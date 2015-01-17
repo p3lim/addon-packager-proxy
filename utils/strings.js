@@ -33,7 +33,7 @@ module.exports = {
 	'AUTH_SUCCESSFUL': 'Successfully authenticated with WowInterface.',
 	'ADDON_DETAILS': 'Found existing addon, previous version: "%s".',
 	'ADDON_EXISTS': 'Addon with version "%s" already exist.',
-	'ADDON_UPLOADED': 'Addon "%s" version "%s" was successfully uploaded.'
+	'ADDON_UPLOADED': 'Addon "%s" version "%s" was successfully uploaded.',
 
 	// Misc
 	'CONNECTION_ERROR': 'Failed to connect to "%s".',
