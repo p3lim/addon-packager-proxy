@@ -7,7 +7,7 @@ if(!process.env.WOWI_PASSWORD)
 if(!process.env.GITHUB_SECRET)
 	throw 'Missing environment variable "GITHUB_SECRET"';
 
-var App = require('./app'),
+var Packager = require('./packager'),
 	Utils = require('./utils');
 
 var projects = {},
@@ -31,7 +31,7 @@ handler.on('create', function(event){
 			Utils.Log.info(Utils.Strings.WEBHOOK_RECEIVED_PROCEED.replace('%s', name).replace('%s', event.payload.ref));
 
 			details.tag = event.payload.ref;
-			new App(details);
+			new Packager(details);
 		} else
 			Utils.Log.info(Utils.Strings.WEBHOOK_RECEIVED_UNKNOWN.replace('%s', name));
 	}
