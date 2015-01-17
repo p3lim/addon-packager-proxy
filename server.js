@@ -4,11 +4,12 @@ if(!process.env.WOWI_USERNAME)
 if(!process.env.WOWI_PASSWORD)
 	throw 'Missing environment variable "WOWI_PASSWORD"';
 
-if(!process.env.GITHUB_SECRET)
-	throw 'Missing environment variable "GITHUB_SECRET"';
+if(!process.env.SECRET_KEY)
+	throw 'Missing environment variable "SECRET_KEY"';
 
 if(!process.env.PROJECT_LIST)
 	throw 'Missing environment variable "PROJECT_LIST"';
+
 
 var bl = require('bl'),
 	crypto = require('crypto'),
@@ -78,7 +79,7 @@ app.post('/webhook', function(req, res, next){
 });
 
 function signatureMatch(signature, data){
-	var computed = 'sha1=' + crypto.createHmac('sha1', signature).update(data).digest('hex');
+	var computed = 'sha1=' + crypto.createHmac('sha1', process.env.SECRET_KEY).update(data).digest('hex');
 	return computed === signature;
 }
 
