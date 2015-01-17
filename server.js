@@ -33,7 +33,7 @@ app.post('/webhook', function(req, res, next){
 		if(err)
 			return Log.error(Strings.ERROR_MESSAGE.replace('%s', 'Webhook').replace('%s', err.message));
 
-		if(signatureMatch(signature, data))
+		if(!signatureMatch(signature, data))
 			return Log.error(Strings.WEBHOOK_SIGN_MISMATCH);
 
 		try {
@@ -73,7 +73,7 @@ app.post('/webhook', function(req, res, next){
 
 function signatureMatch(signature, data){
 	var computed = 'sha1=' + crypto.createHmac('sha1', process.env.SECRET_KEY).update(data).digest('hex');
-	return computed == signature;
+	return computed === signature;
 }
 
 request({
