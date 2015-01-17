@@ -71,7 +71,7 @@ function signatureMatch(signature, data){
 }
 
 request({
-	url: 'https://api.github.com/gists/' + process.env.PROJECT_LIST,
+	url: 'https://api.github.com/gists/' + process.env.GIST_ID,
 	json: true,
 	headers: {
 		'User-Agent': 'addon-packager-proxy'
@@ -81,7 +81,7 @@ request({
 		return Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
 
 	if(!data.files)
-		return Log.error(Strings.GIST_NOT_FOUND.replace('%s', process.env.PROJECT_LIST));
+		return Log.error(Strings.GIST_NOT_FOUND.replace('%s', process.env.GIST_ID));
 
 	var file = data.files['addons.json'];
 	if(!file)

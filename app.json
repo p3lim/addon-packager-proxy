@@ -5,8 +5,8 @@
 	"logo": "https://avatars1.githubusercontent.com/u/5995145",
 	"success_url": "https://github.com/p3lim/addon-packager-proxy/wiki/Setup",
 	"env": {
-		"PROJECT_LIST": {
-			"description": "Link to a gist containing a JSON array of project info. More info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
+		"GIST_ID": {
+			"description": "ID of a gist containing a JSON array of project info. More info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
 		},
 		"SECRET_KEY": {
 			"description": "A secret key used for GitHub webhooks.",
