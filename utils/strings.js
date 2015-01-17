@@ -5,10 +5,15 @@ module.exports = {
 	'WEBHOOK_RECEIVED_UNKNOWN': 'Webhook received for unknown addon "%s".',
 	'WEBHOOK_ERROR_MESSAGE': 'Webhook: %s',
 
+	// Gist
+	'GIST_NOT_FOUND': 'Could not find gist "%s".',
+	'GIST_FILE_NOT_FOUND': 'Could not find "addons.json" file in gist.',
+	'GIST_SYNTAX_ERROR': 'Gist contained a syntax error.',
+	'GIST_SUCCESSFUL': 'Successfully fetched addon list.',
+
 	// App
 	'LOOP_EXCEEDED_ATTEMPTS': 'Failed to query CurseForge after %s attempts.',
 	'LOOP_ATTEMPT': 'Attempt #%s at querying CurseForge.',
-	'CONNECTION_ERROR': 'Failed to connect to "%s".',
 	'RESPONSE_INCORRECT': '"%s" responded with code %s.',
 
 	// CurseForge-specific
@@ -23,4 +28,7 @@ module.exports = {
 	'ADDON_DETAILS': 'Found existing addon, previous version: "%s".',
 	'ADDON_EXISTS': 'Addon with version "%s" already exist.',
 	'ADDON_UPLOADED': 'Addon "%s" version "%s" was successfully uploaded.'
+
+	// Misc
+	'CONNECTION_ERROR': 'Failed to connect to "%s".',
 }
