@@ -1,7 +1,9 @@
 var fs = require('fs'),
 	zip = require('adm-zip'),
-	request = require('request'),
-	Utils = require('./utils');
+	request = require('request');
+
+var Log = require('./utils').Log,
+	Strings = require('./utils').Strings;
 
 var cookies = request.jar();
 
@@ -13,10 +15,10 @@ module.exports = function(details){
 	var interval = setInterval(function(){
 		++numPolls;
 		if(numPolls > queryMaxAttempts){
-			Utils.Log.error(Utils.Strings.LOOP_EXCEEDED_ATTEMPTS.replace('%s', queryMaxAttempts));
+			Log.error(Strings.LOOP_EXCEEDED_ATTEMPTS.replace('%s', queryMaxAttempts));
 			clearInterval(interval);
 		} else {
-			Utils.Log.info(Utils.Strings.LOOP_ATTEMPT.replace('%s', numPolls));
+			Log.info(Strings.LOOP_ATTEMPT.replace('%s', numPolls));
 			queryCurse(details, interval);
 		}
 	}, queryDelaySeconds * 1000);
@@ -24,9 +26,9 @@ module.exports = function(details){
 
 function handleErrors(err, res){
 	if(err)
-		Utils.Log.error(Utils.Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
+		Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
 	else if(res && res.statusCode != 200)
-		Utils.Log.error(Utils.Strings.RESPONSE_INCORRECT.replace('%s', res.request.uri.href).replace('%s', res.statusCode));
+		Log.error(Strings.RESPONSE_INCORRECT.replace('%s', res.request.uri.href).replace('%s', res.statusCode));
 	else
 		return true;
 }
@@ -39,17 +41,17 @@ function queryCurse(details, interval){
 		if(handleErrors(err, res)){
 			var tagPath = body.match('(/addons/' + details.curse + '/files/.+/)">' + details.tag + '</a>');
 			if(tagPath){
-				Utils.Log.info(Utils.Strings.CURSE_TAG_FOUND);
+				Log.info(Strings.CURSE_TAG_FOUND);
 
 				request(curseURL + tagPath[1], function(err, res, body){
 					if(handleErrors(err, res)){
 						var filePath = body.match('http://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
 						if(filePath){
-							Utils.Log.info(Utils.Strings.CURSE_FILE_FOUND);
+							Log.info(Strings.CURSE_FILE_FOUND);
 
 							request(curseCDN + filePath[1]).on('response', function(res){
 								if(handleErrors(null, res)){
-									Utils.Log.info(Utils.Strings.CURSE_FILE_DOWNLOADED);
+									Log.info(Strings.CURSE_FILE_DOWNLOADED);
 									clearInterval(interval);
 									queryWowi(details, filePath[2]);
 								}
@@ -57,11 +59,11 @@ function queryCurse(details, interval){
 								handleErrors(err);
 							}).pipe(fs.createWriteStream(filePath[2]));
 						} else
-							Utils.Log.error(Utils.Strings.CURSE_FILE_NOT_FOUND);
+							Log.error(Strings.CURSE_FILE_NOT_FOUND);
 					}
 				});
 			} else
-				Utils.Log.error(Utils.Strings.CURSE_TAG_NOT_FOUND);
+				Log.error(Strings.CURSE_TAG_NOT_FOUND);
 		}
 	});
 }
@@ -81,7 +83,7 @@ function queryWowi(details, filePath){
 		}
 	}, function(err, res, body){
 		if(handleErrors(err, res)){
-			Utils.Log.info(Utils.Strings.AUTH_SUCCESSFUL);
+			Log.info(Strings.AUTH_SUCCESSFUL);
 
 			request({
 				url: wowiAPI + '/addons/details/' + details.wowi + '.json',
@@ -90,7 +92,7 @@ function queryWowi(details, filePath){
 			}, function(err, res, data){
 				if(handleErrors(err, res)){
 					if(details.tag != data[0].version){
-						Utils.Log.info(Utils.Strings.ADDON_DETAILS.replace('%s', data[0].version));
+						Log.info(Strings.ADDON_DETAILS.replace('%s', data[0].version));
 
 						var formData = {
 							id: +details.wowi,
@@ -108,10 +110,10 @@ function queryWowi(details, filePath){
 							formData: formData
 						}, function(err, res, body){
 							if(handleErrors(err, res))
-								Utils.Log.info(Utils.Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+								Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
 						});
 					} else
-						Utils.Log.info(Utils.Strings.ADDON_EXISTS.replace('%s', data.version));
+						Log.info(Strings.ADDON_EXISTS.replace('%s', data.version));
 				}
 			});
 		}
