@@ -13,7 +13,7 @@ var Log = require('./utils').Log,
 app.listen(process.env.PORT || 5000);
 
 app.get('/', function(req, res){
-	res.send('Nothing to see here, move along!');
+	res.redirect('https://github.com/p3lim/addon-packager-proxy/wiki/Setup');
 });
 
 app.post('/webhook', function(req, res, next){
