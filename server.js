@@ -47,8 +47,10 @@ app.post('/webhook', function(req, res, next){
 		next();
 	}));
 }, function(req, res){
-	if(res.event === 'ping')
+	if(res.event === 'ping'){
+		res.status(200).end();
 		return Log.info(Strings.WEBHOOK_PING_MESSAGE.replace('%s', res.payload.zen));
+	}
 
 	if(res.event !== 'create')
 		return Log.info(Strings.WEBHOOK_EVENT_MISMATCH.replace('%s', res.event));
@@ -65,6 +67,8 @@ app.post('/webhook', function(req, res, next){
 
 	details.tag = res.payload.ref;
 	new Packager(details);
+
+	res.status(202).end();
 });
 
 function signatureMatch(signature, data){
