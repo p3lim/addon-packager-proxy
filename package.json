@@ -1,0 +1,14 @@
+{
+	"name": "addon-packager-proxy",
+	"description": "Turns GitHub tags into WowInterface uploads through CurseForce and magic!",
+	"version": "0.1.0",
+	"dependencies": {
+		"adm-zip": "0.4.x",
+		"github-webhook-handler": "0.2.x",
+		"request": "2.51.x"
+	},
+	"engines": {
+		"node": "0.10.x",
+		"npm": "2.2.x"
+	}
+}
