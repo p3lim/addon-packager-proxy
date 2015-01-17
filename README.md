@@ -26,7 +26,8 @@ Here is a breakdown of how the entire process works:
 
 ## How to use
 
-Click the purple button below and follow the instructions on the screen.
+Click the purple button below and follow the instructions on the screen.  
+When it's done deploying, visit [the wiki](https://github.com/p3lim/addon-packager-proxy/wiki/Setup) to finish the setup.
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
