@@ -114,7 +114,7 @@ function queryWowi(details, filePath){
 								Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
 						});
 					} else
-						Log.info(Strings.ADDON_EXISTS.replace('%s', data.version));
+						Log.info(Strings.ADDON_EXISTS.replace('%s', data[0].version));
 				}
 			});
 		}
