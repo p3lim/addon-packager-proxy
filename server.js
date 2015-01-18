@@ -16,6 +16,38 @@ app.get('/', function(req, res){
 	res.redirect('https://github.com/p3lim/addon-packager-proxy/wiki/Setup');
 });
 
+app.param(function(name, fn){
+	if(fn instanceof RegExp){
+		return function(req, res, next, val){
+			var captures;
+			if(captures = fn.exec(String(val))){
+				req.params[name] = captures;
+				next();
+			} else
+				next('route');
+		}
+	}
+});
+
+app.param('repo', /[\d\w\.-]+/);
+app.param('tag', /.+/);
+
+app.get('/force/:repo/:tag', function(req, res){
+	var name = req.params.repo;
+	var details = projects[name];
+	if(!details){
+		res.status(400).send(Strings.WEBHOOK_REPO_MISMATCH.replace('%s', name));
+		return Log.info(Strings.WEBHOOK_REPO_MISMATCH.replace('%s', name));
+	}
+
+	var tag = req.params.tag;
+	res.send(Strings.FORCED_CHECK_MESSAGE.replace('%s', name).replace('%s', tag));
+	Log.info(Strings.FORCED_CHECK_MESSAGE.replace('%s', name).replace('%s', tag));
+
+	details.tag = tag;
+	new Packager(details);
+});
+
 app.post('/', function(req, res, next){
 	if(!req.headers['x-github-delivery'])
 		return Log.error(Strings.WEBHOOK_NO_DELIVERY);

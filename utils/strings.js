@@ -21,6 +21,7 @@ module.exports = {
 	'LOOP_EXCEEDED_ATTEMPTS': 'Failed to query CurseForge after %s attempts.',
 	'LOOP_ATTEMPT': 'Attempt #%s at querying CurseForge.',
 	'RESPONSE_INCORRECT': '"%s" responded with code %s.',
+	'FORCED_CHECK_MESSAGE': 'Received forced check for "%s" version "%s".',
 
 	// CurseForge-specific
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',
