@@ -129,7 +129,7 @@ function getChangelog(details, file){
 function markdownToBBCode(str){
 	var doc = markdown.toHTML(str);
 
-	// Welcome to rexex hell
+	// Welcome to regex hell
 	doc = doc.replace(/<\/li><li>/gm, '\n[*]');
 	doc = doc.replace(/<li>/gm, '[*]');
 	doc = doc.replace(/<\/li>/gm, '');
