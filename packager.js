@@ -8,8 +8,8 @@ var Log = require('./utils').Log,
 
 var cookies = request.jar();
 
-var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS || 3, 10), 2);
-var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS || 60, 300), 30);
+var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
+var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
 
 module.exports = function(details){
 	var numPolls = 0;
