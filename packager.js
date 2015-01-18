@@ -40,33 +40,36 @@ var curseCDN = 'http://addons.cursecdn.com';
 
 function queryCurse(details, interval){
 	request(curseURL + '/addons/' + details.curse + '/files', function(err, res, body){
-		if(handleErrors(err, res)){
-			var tagPath = body.match('(/addons/' + details.curse + '/files/.+/)">' + details.tag + '</a>');
-			if(tagPath){
-				Log.info(Strings.CURSE_TAG_FOUND);
+		if(!handleErrors(err, res))
+			return;
 
-				request(curseURL + tagPath[1], function(err, res, body){
-					if(handleErrors(err, res)){
-						var filePath = body.match('http://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
-						if(filePath){
-							Log.info(Strings.CURSE_FILE_FOUND);
+		var tagPath = body.match('(/addons/' + details.curse + '/files/.+/)">' + details.tag + '</a>');
+		if(!tagPath)
+			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
 
-							request(curseCDN + filePath[1]).on('response', function(res){
-								if(handleErrors(null, res)){
-									Log.info(Strings.CURSE_FILE_DOWNLOADED);
-									clearInterval(interval);
-									queryWowi(details, filePath[2]);
-								}
-							}).on('error', function(err){
-								handleErrors(err);
-							}).pipe(fs.createWriteStream(filePath[2]));
-						} else
-							Log.error(Strings.CURSE_FILE_NOT_FOUND);
-					}
-				});
-			} else
-				Log.error(Strings.CURSE_TAG_NOT_FOUND);
-		}
+		Log.info(Strings.CURSE_TAG_FOUND);
+
+		request(curseURL + tagPath[1], function(err, res, body){
+			if(!handleErrors(err, res))
+				return;
+
+			var filePath = body.match('http://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
+			if(!filePath)
+				return Log.error(Strings.CURSE_FILE_NOT_FOUND);
+
+			Log.info(Strings.CURSE_FILE_FOUND);
+
+			request(curseCDN + filePath[1]).on('response', function(res){
+				if(!handleErrors(null, res))
+					return;
+
+				Log.info(Strings.CURSE_FILE_DOWNLOADED);
+				clearInterval(interval);
+				queryWowi(details, filePath[2]);
+			}).on('error', function(err){
+				handleErrors(err);
+			}).pipe(fs.createWriteStream(filePath[2]));
+		});
 	});
 }
 
@@ -84,41 +87,46 @@ function queryWowi(details, filePath){
 			'do': 'login'
 		}
 	}, function(err, res, body){
-		if(handleErrors(err, res)){
-			Log.info(Strings.AUTH_SUCCESSFUL);
+		if(!handleErrors(err, res))
+			return;
 
-			request({
-				url: wowiAPI + '/addons/details/' + details.wowi + '.json',
+		Log.info(Strings.AUTH_SUCCESSFUL);
+
+		request({
+			url: wowiAPI + '/addons/details/' + details.wowi + '.json',
+			jar: cookies,
+			json: true
+		}, function(err, res, data){
+			if(!handleErrors(err, res))
+				return;
+
+			var currentVersion = data[0].version;
+			if(details.tag == currentVersion)
+				return Log.info(Strings.ADDON_EXISTS.replace('%s', currentVersion));
+
+			Log.info(Strings.ADDON_DETAILS.replace('%s', currentVersion));
+
+			var formData = {
+				id: +details.wowi,
+				version: details.tag,
+				updatefile: fs.createReadStream(filePath)
+			};
+
+			var changelog = getChangelog(details, filePath);
+			if(changelog)
+				formData.changelog = Utils.HTMLToBBCode(markdown.toHTML(changelog));
+
+			request.post({
+				url: wowiAPI + '/addons/update',
 				jar: cookies,
-				json: true
-			}, function(err, res, data){
-				if(handleErrors(err, res)){
-					if(details.tag != data[0].version){
-						Log.info(Strings.ADDON_DETAILS.replace('%s', data[0].version));
+				formData: formData
+			}, function(err, res, body){
+				if(!handleErrors(err, res))
+					return;
 
-						var formData = {
-							id: +details.wowi,
-							version: details.tag,
-							updatefile: fs.createReadStream(filePath)
-						};
-
-						var changelog = getChangelog(details, filePath);
-						if(changelog)
-							formData.changelog = Utils.HTMLToBBCode(markdown.toHTML(changelog));
-
-						request.post({
-							url: wowiAPI + '/addons/update',
-							jar: cookies,
-							formData: formData
-						}, function(err, res, body){
-							if(handleErrors(err, res))
-								Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
-						});
-					} else
-						Log.info(Strings.ADDON_EXISTS.replace('%s', data[0].version));
-				}
+				Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
 			});
-		}
+		});
 	});
 }
 
