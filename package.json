@@ -1,7 +1,7 @@
 {
 	"name": "addon-packager-proxy",
 	"author": "Adrian L Lange",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Turns GitHub tags into WowInterface uploads through CurseForce and magic!",
 	"main": "server.js",
 	"scripts": {
