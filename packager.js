@@ -1,7 +1,7 @@
 var fs = require('fs'),
 	zip = require('adm-zip'),
 	request = require('request'),
-	markdown = require('markdown');
+	markdown = require('markdown').markdown;
 
 var Log = require('./utils').Log,
 	Strings = require('./utils').Strings;
