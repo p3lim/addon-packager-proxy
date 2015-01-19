@@ -1,11 +1,19 @@
-
-module.exports = (function(){
+module.exports = function(){
 	return {
 		info: function(message){
-			console.log('[LOG] ' + message);
+			if(this.id)
+				console.log('[LOG.' + this.id + '] ' + message);
+			else
+				console.log('[LOG] ' + message);
 		},
 		error: function(message){
-			console.log('[ERR] ' + message);
+			if(this.id)
+				console.log('[ERR.' + this.id + '] ' + message);
+			else
+				console.log('[ERR] ' + message);
+		},
+		setID: function(id){
+			this.id = id;
 		}
 	}
-})();
+};

@@ -4,9 +4,10 @@ var bl = require('bl'),
 	request = require('request');
 
 var app = express(),
-	projects = {};
+	projects = {},
+	workID = 0;
 
-var Log = require('./utils').Log,
+var Log = new require('./utils').Log(),
 	Strings = require('./utils').Strings,
 	Packager = require('./packager');
 
@@ -45,7 +46,7 @@ app.get('/force/:repo/:tag', function(req, res){
 	Log.info(Strings.FORCED_CHECK_MESSAGE.replace('%s', name).replace('%s', tag));
 
 	details.tag = tag;
-	new Packager(details);
+	new Packager(details, ++workID);
 });
 
 app.post('/', function(req, res, next){
@@ -98,7 +99,7 @@ app.post('/', function(req, res, next){
 	Log.info(Strings.WEBHOOK_RECEIVED_MESSAGE.replace('%s', name).replace('%s', res.payload.ref));
 
 	details.tag = res.payload.ref;
-	new Packager(details);
+	new Packager(details, ++workID);
 
 	res.status(202).end();
 });

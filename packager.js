@@ -5,14 +5,17 @@ var fs = require('fs'),
 
 var Utils = require('./utils'),
 	Strings = Utils.Strings,
-	Log = Utils.Log;
+	Log = new Utils.Log();
 
 var cookies = request.jar();
 
 var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
 var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
 
-module.exports = function(details){
+module.exports = function(details, id){
+	Log.setID(id);
+	Log.info(Strings.WORK_ORDER_STARTED.replace('%s', id));
+
 	var numPolls = 0;
 	var interval = setInterval(function(){
 		++numPolls;
