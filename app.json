@@ -6,7 +6,7 @@
 	"success_url": "/",
 	"env": {
 		"GIST_ID": {
-			"description": "ID of a gist containing a JSON array of project info. More info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
+			"description": "ID of a gist containing information about your addons. More info: https://github.com/p3lim/addon-packager-proxy/wiki/AddonList"
 		},
 		"SECRET_KEY": {
 			"description": "A secret key used for GitHub webhooks. Treat this like a password."
