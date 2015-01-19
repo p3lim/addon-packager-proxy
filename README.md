@@ -24,9 +24,12 @@ Here is a breakdown of how the entire process works:
 7. The application then grabs the zip off CurseForge once it's ready.
 8. The application authorizes and uploads the addon to WowInterface.
 
-## How to use
+## How to install
 
-Click the purple button below and follow the instructions on the screen.  
+First off you'll want to create a list of information about the addons you want the app to access.  
+Please see [this wiki article]() about it, you will need it for the setup.
+
+Click the purple deploy button below and follow the instructions on the screen.  
 When it's done deploying, visit [the wiki](https://github.com/p3lim/addon-packager-proxy/wiki/Setup) to finish the setup.
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)

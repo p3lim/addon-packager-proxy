@@ -5,14 +5,17 @@ var fs = require('fs'),
 
 var Utils = require('./utils'),
 	Strings = Utils.Strings,
-	Log = Utils.Log;
+	Log = new Utils.Log();
 
 var cookies = request.jar();
 
 var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
 var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
 
-module.exports = function(details){
+module.exports = function(details, id){
+	Log.setID(id);
+	Log.info(Strings.WORK_ORDER_STARTED.replace('%s', id));
+
 	var numPolls = 0;
 	var interval = setInterval(function(){
 		++numPolls;
@@ -112,9 +115,16 @@ function queryWowi(details, filePath){
 				updatefile: fs.createReadStream(filePath)
 			};
 
-			var changelog = getChangelog(details, filePath);
-			if(changelog)
-				formData.changelog = Utils.HTMLToBBCode(markdown.toHTML(changelog));
+			if(details.changelog){
+				if(!details.changelogPath)
+					details.changelogPath = 'CHANGELOG.md';
+
+				var changelog = getChangelog(details, filePath);
+				if(!changelog)
+					Log.error(Strings.CHANGELOG_MISSING.replace('%s', details.changelogPath));
+				else
+					formData.changelog = Utils.HTMLToBBCode(markdown.toHTML(changelog));
+			}
 
 			request.post({
 				url: wowiAPI + '/addons/update',
@@ -132,5 +142,5 @@ function queryWowi(details, filePath){
 
 function getChangelog(details, file){
 	var archive = new zip(file);
-	return archive.readAsText(archive.getEntry(details.path + '/CHANGELOG.md'));
+	return archive.readAsText(archive.getEntry(details.path + '/' + (details.changelogPath || 'CHANGELOG.md')));
 }
