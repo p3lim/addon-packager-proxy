@@ -17,21 +17,19 @@ app.get('/', function(req, res){
 	res.redirect('https://github.com/p3lim/addon-packager-proxy/wiki/Setup');
 });
 
-app.param(function(name, fn){
-	if(fn instanceof RegExp){
-		return function(req, res, next, val){
-			var captures;
-			if(captures = fn.exec(String(val))){
-				req.params[name] = captures;
-				next();
-			} else
-				next('route');
-		}
+var regexParam = function(name, fn){
+	return function(req, res, next, val){
+		var captures;
+		if(captures = fn.exec(String(val))){
+			req.params[name] = captures[0];
+			next();
+		} else
+			next('route');
 	}
-});
+}
 
-app.param('repo', /[\d\w\.-]+/);
-app.param('tag', /.+/);
+app.param('repo', regexParam('repo', /[\d\w\.-]+/));
+app.param('tag', regexParam('tag', /.+/));
 
 app.get('/force/:repo/:tag', function(req, res){
 	var name = req.params.repo;
