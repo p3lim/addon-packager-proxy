@@ -1,4 +1,4 @@
-module.exports = function(str){
+module.exports = function(doc){
 	// Welcome to regex hell
 	doc = doc.replace(/<\/li><li>/gm, '\n[*]');
 	doc = doc.replace(/<li>/gm, '[*]');
