@@ -50,28 +50,39 @@ app.get('/force/:repo/:tag', function(req, res){
 });
 
 app.post('/', function(req, res, next){
-	if(!req.headers['x-github-delivery'])
+	if(!req.headers['x-github-delivery']){
+		res.status(400).end();
 		return Log.error(Strings.WEBHOOK_NO_DELIVERY);
+	}
 
 	var signature = req.headers['x-hub-signature'],
 		event = req.headers['x-github-event'];
 
-	if(!signature)
+	if(!signature){
+		res.status(400).end();
 		return Log.error(Strings.WEBHOOK_NO_SECRET);
+	}
 
-	if(!event)
+	if(!event){
+		res.status(400).end();
 		return Log.error(Strings.WEBHOOK_NO_EVENT);
+	}
 
 	req.pipe(bl(function(err, data){
-		if(err)
+		if(err){
+			res.status(500).end();
 			return Log.error(Strings.ERROR_MESSAGE.replace('%s', 'Webhook').replace('%s', err.message));
+		}
 
-		if(!signatureMatch(signature, data))
+		if(!signatureMatch(signature, data)){
+			res.status(401).end();
 			return Log.error(Strings.WEBHOOK_SIGN_MISMATCH);
+		}
 
 		try {
 			res.payload = JSON.parse(data.toString());
 		} catch(err){
+			res.status(400).end();
 			return Log.error(Strings.WEBHOOK_SYNTAX_ERROR);
 		}
 
@@ -85,16 +96,22 @@ app.post('/', function(req, res, next){
 		return Log.info(Strings.WEBHOOK_PING_MESSAGE.replace('%s', res.payload.zen));
 	}
 
-	if(res.event !== 'create')
+	if(res.event !== 'create'){
+		res.status(204).end();
 		return Log.info(Strings.WEBHOOK_EVENT_MISMATCH.replace('%s', res.event));
+	}
 
-	if(res.payload.ref_type !== 'tag')
+	if(res.payload.ref_type !== 'tag'){
+		res.status(204).end();
 		return Log.info(Strings.WEBHOOK_REF_MISMATCH.replace('%s', res.payload.ref_type));
+	}
 
 	var name = res.payload.repository.name;
 	var details = projects[name];
-	if(!details)
+	if(!details){
+		res.status(204).end();
 		return Log.info(Strings.WEBHOOK_REPO_MISMATCH.replace('%s', name));
+	}
 
 	Log.info(Strings.WEBHOOK_RECEIVED_MESSAGE.replace('%s', name).replace('%s', res.payload.ref));
 
