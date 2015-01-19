@@ -23,6 +23,7 @@ module.exports = {
 	'RESPONSE_INCORRECT': '"%s" responded with code %s.',
 	'FORCED_CHECK_MESSAGE': 'Received forced check for "%s" version "%s".',
 	'WORK_ORDER_STARTED': 'Work order #%s started',
+	'CHANGELOG_MISSING': 'Changelog file "%s" is missing.',
 
 	// CurseForge-specific
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',
