@@ -1,7 +1,5 @@
 var fs = require('fs'),
-	zip = require('adm-zip'),
-	request = require('request'),
-	markdown = require('markdown').markdown;
+	request = require('request');
 
 var Utils = require('./utils'),
 	Strings = Utils.Strings,
@@ -109,38 +107,36 @@ function queryWowi(details, filePath){
 
 			Log.info(Strings.ADDON_DETAILS.replace('%s', currentVersion));
 
-			var formData = {
-				id: +details.wowi,
-				version: details.tag,
-				updatefile: fs.createReadStream(filePath)
-			};
+			var postData = {
+				url: wowiAPI + '/addons/update',
+				jar: cookies,
+				formData: {
+					id: +details.wowi,
+					version: details.tag,
+					updatefile: fs.createReadStream(filePath)
+				}
+			}
 
 			if(details.changelog){
 				if(!details.changelogPath)
 					details.changelogPath = 'CHANGELOG.md';
 
-				var changelog = getChangelog(details, filePath);
-				if(!changelog)
-					Log.error(Strings.CHANGELOG_MISSING.replace('%s', details.changelogPath));
-				else
-					formData.changelog = Utils.HTMLToBBCode(markdown.toHTML(changelog));
-			}
+				Utils.fetchChangelog(details, function(changelog){
+					postData.formData.changelog = Utils.formatChangelog(changelog);
 
-			request.post({
-				url: wowiAPI + '/addons/update',
-				jar: cookies,
-				formData: formData
-			}, function(err, res, body){
-				if(!handleErrors(err, res))
-					return;
-
-				Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
-			});
+					updateWowi(postData);
+				});
+			} else
+				updateWowi(postData);
 		});
 	});
 }
 
-function getChangelog(details, file){
-	var archive = new zip(file);
-	return archive.readAsText(archive.getEntry(details.path + '/' + (details.changelogPath || 'CHANGELOG.md')));
+function updateWowi(data){
+	request.post(data, function(err, res, body){
+		if(!handleErrors(err, res))
+			return;
+
+		Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+	});
 }

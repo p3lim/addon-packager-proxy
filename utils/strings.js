@@ -23,7 +23,7 @@ module.exports = {
 	'RESPONSE_INCORRECT': '"%s" responded with code %s.',
 	'FORCED_CHECK_MESSAGE': 'Received forced check for "%s" version "%s".',
 	'WORK_ORDER_STARTED': 'Work order #%s started',
-	'CHANGELOG_MISSING': 'Changelog file "%s" is missing.',
+	'CHANGELOG_MISSING': 'Changelog file at path "%s" is missing.',
 
 	// CurseForge-specific
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',
@@ -43,4 +43,5 @@ module.exports = {
 	'ERROR_MESSAGE': '%s: %s',
 	'SIGN_PROVIDED': 'Signature provided: %s',
 	'SIGN_COMPUTED': 'Signature computed: %s',
+	'CLONE_ERROR': 'Cloning failed with status %s.',
 }
