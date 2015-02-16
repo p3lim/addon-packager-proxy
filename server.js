@@ -17,21 +17,19 @@ app.get('/', function(req, res){
 	res.redirect('https://github.com/p3lim/addon-packager-proxy/wiki/Setup');
 });
 
-app.param(function(name, fn){
-	if(fn instanceof RegExp){
-		return function(req, res, next, val){
-			var captures;
-			if(captures = fn.exec(String(val))){
-				req.params[name] = captures;
-				next();
-			} else
-				next('route');
-		}
+var regexParam = function(name, fn){
+	return function(req, res, next, val){
+		var captures;
+		if(captures = fn.exec(String(val))){
+			req.params[name] = captures[0];
+			next();
+		} else
+			next('route');
 	}
-});
+}
 
-app.param('repo', /[\d\w\.-]+/);
-app.param('tag', /.+/);
+app.param('repo', regexParam('repo', /[\d\w\.-]+/));
+app.param('tag', regexParam('tag', /.+/));
 
 app.get('/force/:repo/:tag', function(req, res){
 	var name = req.params.repo;
@@ -46,7 +44,7 @@ app.get('/force/:repo/:tag', function(req, res){
 	Log.info(Strings.FORCED_CHECK_MESSAGE.replace('%s', name).replace('%s', tag));
 
 	details.tag = tag;
-	new Packager(details, ++workID);
+	new Packager(details, ++workID, true);
 });
 
 app.post('/', function(req, res, next){
@@ -98,7 +96,7 @@ app.post('/', function(req, res, next){
 
 	if(res.event !== 'create'){
 		res.status(204).end();
-		return Log.info(Strings.WEBHOOK_EVENT_MISMATCH.replace('%s', res.event));
+		return;
 	}
 
 	if(res.payload.ref_type !== 'tag'){

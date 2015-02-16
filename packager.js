@@ -1,32 +1,35 @@
 var fs = require('fs'),
-	zip = require('adm-zip'),
-	request = require('request'),
-	markdown = require('markdown').markdown;
+	request = require('request');
 
 var Utils = require('./utils'),
 	Strings = Utils.Strings,
-	Log = new Utils.Log();
+	Log = new Utils.Log(),
+	Changelog = require('./changelog');
 
 var cookies = request.jar();
 
 var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
 var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
 
-module.exports = function(details, id){
+module.exports = function(details, id, forced){
 	Log.setID(id);
 	Log.info(Strings.WORK_ORDER_STARTED.replace('%s', id));
 
-	var numPolls = 0;
-	var interval = setInterval(function(){
-		++numPolls;
-		if(numPolls > queryMaxAttempts){
-			Log.error(Strings.LOOP_EXCEEDED_ATTEMPTS.replace('%s', queryMaxAttempts));
-			clearInterval(interval);
-		} else {
-			Log.info(Strings.LOOP_ATTEMPT.replace('%s', numPolls));
-			queryCurse(details, interval);
-		}
-	}, queryDelaySeconds * 1000);
+	if(forced)
+		queryCurse(details);
+	else {
+		var numPolls = 0;
+		var interval = setInterval(function(){
+			++numPolls;
+			if(numPolls > queryMaxAttempts){
+				Log.error(Strings.LOOP_EXCEEDED_ATTEMPTS.replace('%s', queryMaxAttempts));
+				clearInterval(interval);
+			} else {
+				Log.info(Strings.LOOP_ATTEMPT.replace('%s', numPolls));
+				queryCurse(details, interval);
+			}
+		}, queryDelaySeconds * 1000);
+	}
 }
 
 function handleErrors(err, res){
@@ -67,7 +70,10 @@ function queryCurse(details, interval){
 					return;
 
 				Log.info(Strings.CURSE_FILE_DOWNLOADED);
-				clearInterval(interval);
+
+				if(interval)
+					clearInterval(interval);
+
 				queryWowi(details, filePath[2]);
 			}).on('error', function(err){
 				handleErrors(err);
@@ -109,38 +115,43 @@ function queryWowi(details, filePath){
 
 			Log.info(Strings.ADDON_DETAILS.replace('%s', currentVersion));
 
-			var formData = {
-				id: +details.wowi,
-				version: details.tag,
-				updatefile: fs.createReadStream(filePath)
-			};
+			var postData = {
+				url: wowiAPI + '/addons/update',
+				jar: cookies,
+				formData: {
+					id: +details.wowi,
+					version: details.tag,
+					updatefile: fs.createReadStream(filePath)
+				}
+			}
 
 			if(details.changelog){
 				if(!details.changelogPath)
 					details.changelogPath = 'CHANGELOG.md';
 
-				var changelog = getChangelog(details, filePath);
-				if(!changelog)
-					Log.error(Strings.CHANGELOG_MISSING.replace('%s', details.changelogPath));
-				else
-					formData.changelog = Utils.HTMLToBBCode(markdown.toHTML(changelog));
-			}
+				Log.info(Strings.CHANGELOG_FETCH.replace('%s', details.changelogPath));
 
-			request.post({
-				url: wowiAPI + '/addons/update',
-				jar: cookies,
-				formData: formData
-			}, function(err, res, body){
-				if(!handleErrors(err, res))
-					return;
+				Changelog.fetch(details, function(err, data){
+					if(err)
+						return Log.error(err);
 
-				Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
-			});
+					postData.formData.changelog = Changelog.process(data);
+
+					updateWowi(details, postData);
+				});
+			} else
+				updateWowi(details, postData);
 		});
 	});
 }
 
-function getChangelog(details, file){
-	var archive = new zip(file);
-	return archive.readAsText(archive.getEntry(details.path + '/' + (details.changelogPath || 'CHANGELOG.md')));
+function updateWowi(details, postData){
+	Log.info(Strings.ADDON_UPLOADING);
+
+	request.post(postData, function(err, res, body){
+		if(!handleErrors(err, res))
+			return;
+
+		Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+	});
 }
