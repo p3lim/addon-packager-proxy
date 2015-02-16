@@ -137,18 +137,18 @@ function queryWowi(details, filePath){
 
 					postData.formData.changelog = Changelog.process(data);
 
-					updateWowi(postData);
+					updateWowi(details, postData);
 				});
 			} else
-				updateWowi(postData);
+				updateWowi(details, postData);
 		});
 	});
 }
 
-function updateWowi(data){
+function updateWowi(details, postData){
 	Log.info(Strings.ADDON_UPLOADING);
 
-	request.post(data, function(err, res, body){
+	request.post(postData, function(err, res, body){
 		if(!handleErrors(err, res))
 			return;
 
