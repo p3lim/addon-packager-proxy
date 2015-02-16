@@ -44,7 +44,7 @@ app.get('/force/:repo/:tag', function(req, res){
 	Log.info(Strings.FORCED_CHECK_MESSAGE.replace('%s', name).replace('%s', tag));
 
 	details.tag = tag;
-	new Packager(details, ++workID);
+	new Packager(details, ++workID, true);
 });
 
 app.post('/', function(req, res, next){
