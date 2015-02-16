@@ -121,6 +121,8 @@ function queryWowi(details, filePath){
 				if(!details.changelogPath)
 					details.changelogPath = 'CHANGELOG.md';
 
+				Log.info(Strings.CHANGELOG_FETCH.replace('%s', details.changelogPath));
+
 				Utils.fetchChangelog(details, function(changelog){
 					postData.formData.changelog = Utils.formatChangelog(changelog);
 
@@ -133,6 +135,8 @@ function queryWowi(details, filePath){
 }
 
 function updateWowi(data){
+	Log.info(Strings.ADDON_UPLOADING);
+
 	request.post(data, function(err, res, body){
 		if(!handleErrors(err, res))
 			return;
