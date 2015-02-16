@@ -96,7 +96,7 @@ app.post('/', function(req, res, next){
 
 	if(res.event !== 'create'){
 		res.status(204).end();
-		return Log.info(Strings.WEBHOOK_EVENT_MISMATCH.replace('%s', res.event));
+		return;
 	}
 
 	if(res.payload.ref_type !== 'tag'){
