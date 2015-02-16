@@ -11,21 +11,25 @@ var cookies = request.jar();
 var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
 var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
 
-module.exports = function(details, id){
+module.exports = function(details, id, forced){
 	Log.setID(id);
 	Log.info(Strings.WORK_ORDER_STARTED.replace('%s', id));
 
-	var numPolls = 0;
-	var interval = setInterval(function(){
-		++numPolls;
-		if(numPolls > queryMaxAttempts){
-			Log.error(Strings.LOOP_EXCEEDED_ATTEMPTS.replace('%s', queryMaxAttempts));
-			clearInterval(interval);
-		} else {
-			Log.info(Strings.LOOP_ATTEMPT.replace('%s', numPolls));
-			queryCurse(details, interval);
-		}
-	}, queryDelaySeconds * 1000);
+	if(forced)
+		queryCurse(details);
+	else {
+		var numPolls = 0;
+		var interval = setInterval(function(){
+			++numPolls;
+			if(numPolls > queryMaxAttempts){
+				Log.error(Strings.LOOP_EXCEEDED_ATTEMPTS.replace('%s', queryMaxAttempts));
+				clearInterval(interval);
+			} else {
+				Log.info(Strings.LOOP_ATTEMPT.replace('%s', numPolls));
+				queryCurse(details, interval);
+			}
+		}, queryDelaySeconds * 1000);
+	}
 }
 
 function handleErrors(err, res){
@@ -66,7 +70,10 @@ function queryCurse(details, interval){
 					return;
 
 				Log.info(Strings.CURSE_FILE_DOWNLOADED);
-				clearInterval(interval);
+
+				if(interval)
+					clearInterval(interval);
+
 				queryWowi(details, filePath[2]);
 			}).on('error', function(err){
 				handleErrors(err);
