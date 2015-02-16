@@ -18,7 +18,7 @@ Here is a breakdown of how the entire process works:
 1. The user commits his/her changes locally and creates tags, the tags are used as version numbers/strings.
 2. The user pushes the commit(s) and tag(s) to GitHub.
 3. GitHub recognizes the tag(s) created, sends off a webhook to the application.
-4. The application notices the webhook and queues the application.
+4. The application notices the webhook and queues the addon.
 5. The user pushes the commit(s) and tag(s) to CurseForge.
 6. After some time, the application starts querying CurseForge to see if the packager has finished making a zip.
 7. The application then grabs the zip off CurseForge once it's ready.
