@@ -135,6 +135,8 @@ function queryWowi(details, filePath){
 					if(err)
 						return Log.error(err);
 
+					Log.info(Strings.CHANGELOG_FETCHED.replace('%s', details.changelogPath));
+
 					postData.formData.changelog = Changelog.process(data);
 
 					updateWowi(details, postData);
