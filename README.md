@@ -27,7 +27,7 @@ Here is a breakdown of how the entire process works:
 ## How to install
 
 First off you'll want to create a list of information about the addons you want the app to access.  
-Please see [this wiki article]() about it, you will need it for the setup.
+Please see [this wiki article](https://github.com/p3lim/addon-packager-proxy/wiki/AddonList) about it, you will need it for the setup.
 
 Click the purple deploy button below and follow the instructions on the screen.  
 When it's done deploying, visit [the wiki](https://github.com/p3lim/addon-packager-proxy/wiki/Setup) to finish the setup.
