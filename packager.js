@@ -4,7 +4,7 @@ var fs = require('fs'),
 var Utils = require('./utils'),
 	Strings = Utils.Strings,
 	Log = new Utils.Log(),
-	Changelog = require('./changelog');
+	Files = require('./files');
 
 var cookies = request.jar();
 
@@ -131,13 +131,13 @@ function queryWowi(details, filePath){
 
 				Log.info(Strings.CHANGELOG_FETCH.replace('%s', details.changelogPath));
 
-				Changelog.fetch(details, function(err, data){
+				Files.fetchChangelog(details, function(err, data){
 					if(err)
 						return Log.error(err);
 
 					Log.info(Strings.CHANGELOG_FETCHED.replace('%s', details.changelogPath));
 
-					postData.formData.changelog = Changelog.process(data);
+					postData.formData.changelog = Files.formatChangelog(data);
 
 					updateWowi(details, postData);
 				});
