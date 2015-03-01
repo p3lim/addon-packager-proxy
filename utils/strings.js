@@ -26,6 +26,8 @@ module.exports = {
 	'CHANGELOG_MISSING': 'Changelog file at path "%s" is missing.',
 	'CHANGELOG_FETCH': 'Attempting to fetch changelog from path "%s".',
 	'CHANGELOG_FETCHED': 'Changelog fetched successfully from path "%s".',
+	'TOC_MISSING': 'Toc file is missing.',
+	'INTERFACE_VERSION_MISSING': 'Toc file does not contain an Interface version.',
 
 	// CurseForge-specific
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',

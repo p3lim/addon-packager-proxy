@@ -148,12 +148,19 @@ function queryWowi(details, filePath){
 }
 
 function updateWowi(details, postData){
-	Log.info(Strings.ADDON_UPLOADING);
+	Files.getInterfaceVersion(details, function(err, version){
+		if(err)
+			return Log.error(err);
 
-	request.post(postData, function(err, res, body){
-		if(!handleErrors(err, res))
-			return;
+		postData.formData.compatible = version;
 
-		Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+		Log.info(Strings.ADDON_UPLOADING);
+
+		request.post(postData, function(err, res, body){
+			if(!handleErrors(err, res))
+				return;
+
+			Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+		});
 	});
 }
