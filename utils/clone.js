@@ -1,4 +1,4 @@
-var Strings = module.exports.Strings;
+var Strings = require('./strings');
 
 var spawn = require('child_process').spawn;
 module.exports = function(repo, name, callback){
