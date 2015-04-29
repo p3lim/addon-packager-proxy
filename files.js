@@ -46,7 +46,7 @@ module.exports.getInterfaceVersion = function(details, callback){
 						if(!interfaceVersion)
 							callback(new Error(Utils.Strings.INTERFACE_VERSION_MISSING));
 						else
-							callback(interfaceVersion[1]);
+							callback(null, interfaceVersion[1]);
 					}
 				});
 			}
