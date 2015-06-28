@@ -48,5 +48,7 @@ module.exports = {
 	'ERROR_MESSAGE': '%s: %s',
 	'SIGN_PROVIDED': 'Signature provided: %s',
 	'SIGN_COMPUTED': 'Signature computed: %s',
+	'FETCH_ERROR': 'Fetching failed with status %s.',
+	'MERGE_ERROR': 'Merging failed with status %s.',
 	'CLONE_ERROR': 'Cloning failed with status %s.',
 }
