@@ -20,7 +20,7 @@ module.exports = {
 	// App
 	'LOOP_EXCEEDED_ATTEMPTS': 'Failed to query CurseForge after %s attempts.',
 	'LOOP_ATTEMPT': 'Attempt #%s at querying CurseForge.',
-	'RESPONSE_INCORRECT': '"%s" responded with code %s.',
+	'RESPONSE_INCORRECT': '"%s" responded with code %s: "%s"',
 	'FORCED_CHECK_MESSAGE': 'Received forced check for "%s" version "%s".',
 	'WORK_ORDER_STARTED': 'Work order #%s started',
 	'CHANGELOG_MISSING': 'Changelog file at path "%s" is missing.',

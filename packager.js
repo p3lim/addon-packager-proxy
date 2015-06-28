@@ -32,11 +32,11 @@ module.exports = function(details, id, forced){
 	}
 }
 
-function handleErrors(err, res){
+function handleErrors(err, res, body){
 	if(err)
 		Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
 	else if(res && res.statusCode != 200)
-		Log.error(Strings.RESPONSE_INCORRECT.replace('%s', res.request.uri.href).replace('%s', res.statusCode));
+		Log.error(Strings.RESPONSE_INCORRECT.replace('%s', res.request.uri.href).replace('%s', res.statusCode).replace('%s', body || 'null'));
 	else
 		return true;
 }
@@ -96,7 +96,7 @@ function queryWowi(details, filePath){
 			'do': 'login'
 		}
 	}, function(err, res, body){
-		if(!handleErrors(err, res))
+		if(!handleErrors(err, res, body))
 			return;
 
 		Log.info(Strings.AUTH_SUCCESSFUL);
@@ -106,7 +106,7 @@ function queryWowi(details, filePath){
 			jar: cookies,
 			json: true
 		}, function(err, res, data){
-			if(!handleErrors(err, res))
+			if(!handleErrors(err, res, data))
 				return;
 
 			var currentVersion = data[0].version;
@@ -157,7 +157,7 @@ function updateWowi(details, postData){
 		Log.info(Strings.ADDON_UPLOADING);
 
 		request.post(postData, function(err, res, body){
-			if(!handleErrors(err, res))
+			if(!handleErrors(err, res, body))
 				return;
 
 			Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
