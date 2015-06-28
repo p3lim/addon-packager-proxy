@@ -152,7 +152,7 @@ function updateWowi(details, postData){
 		if(err)
 			return Log.error(err);
 
-		postData.formData.compatible = version;
+		postData.formData.compatible = version.charAt(0) + '.' + version.charAt(2);
 
 		Log.info(Strings.ADDON_UPLOADING);
 
