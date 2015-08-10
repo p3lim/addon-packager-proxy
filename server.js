@@ -28,8 +28,46 @@ var regexParam = function(name, fn){
 	}
 }
 
+var fetchAddonList = function(){
+	request({
+		url: 'https://api.github.com/gists/' + process.env.GIST_ID,
+		json: true,
+		headers: {
+			'User-Agent': 'addon-packager-proxy'
+		}
+	}, function(err, res, data){
+		if(err)
+			return Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
+
+		if(!data.files)
+			return Log.error(Strings.GIST_NOT_FOUND.replace('%s', process.env.GIST_ID));
+
+		var file = data.files['addons.json'];
+		if(!file)
+			return Log.error(Strings.GIST_FILE_NOT_FOUND);
+
+		var obj;
+		try {
+			obj = JSON.parse(file.content);
+		} catch(err){
+			return Log.error(Strings.GIST_SYNTAX_ERROR);
+		}
+
+		for(var index in obj)
+			projects[obj[index].repo] = obj[index];
+
+		Log.info(Strings.GIST_SUCCESSFUL);
+	});
+}
+
 app.param('repo', regexParam('repo', /[\d\w\.-]+/));
 app.param('tag', regexParam('tag', /.+/));
+
+app.get('/updatelist', function(req, res){
+	fetchAddonList();
+	res.Send(Strings.FORCED_GIST_UPDATE_MESSAGE);
+	Log.info(Strings.FORCED_GIST_UPDATE_MESSAGE);
+});
 
 app.get('/force/:repo/:tag', function(req, res){
 	var name = req.params.repo;
@@ -129,32 +167,4 @@ function signatureMatch(signature, data){
 	}
 }
 
-request({
-	url: 'https://api.github.com/gists/' + process.env.GIST_ID,
-	json: true,
-	headers: {
-		'User-Agent': 'addon-packager-proxy'
-	}
-}, function(err, res, data){
-	if(err)
-		return Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
-
-	if(!data.files)
-		return Log.error(Strings.GIST_NOT_FOUND.replace('%s', process.env.GIST_ID));
-
-	var file = data.files['addons.json'];
-	if(!file)
-		return Log.error(Strings.GIST_FILE_NOT_FOUND);
-
-	var obj;
-	try {
-		obj = JSON.parse(file.content);
-	} catch(err){
-		return Log.error(Strings.GIST_SYNTAX_ERROR);
-	}
-
-	for(var index in obj)
-		projects[obj[index].repo] = obj[index];
-
-	Log.info(Strings.GIST_SUCCESSFUL);
-});
+fetchAddonList();
