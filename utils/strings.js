@@ -22,6 +22,7 @@ module.exports = {
 	'LOOP_ATTEMPT': 'Attempt #%s at querying CurseForge.',
 	'RESPONSE_INCORRECT': '"%s" responded with code %s: "%s"',
 	'FORCED_CHECK_MESSAGE': 'Received forced check for "%s" version "%s".',
+	'FORCED_GIST_UPDATE_MESSAGE': 'Received forced update of addon list.',
 	'WORK_ORDER_STARTED': 'Work order #%s started',
 	'CHANGELOG_MISSING': 'Changelog file at path "%s" is missing.',
 	'CHANGELOG_FETCH': 'Attempting to fetch changelog from path "%s".',
