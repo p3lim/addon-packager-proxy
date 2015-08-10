@@ -11,16 +11,17 @@ module.exports.fetchChangelog = function(details, callback){
 			callback(err);
 		else {
 			var filePath = path + '/' + details.changelogPath;
-			if(!fs.existsSync(filePath))
-				callback(new Error(Utils.Strings.CHANGELOG_MISSING.replace('%s', details.changelogPath)))
-			else {
-				fs.readFile(filePath, {encoding: details.encoding || 'utf8'}, function(err, data){
-					if(err)
-						callback(err);
-					else
-						callback(null, data);
-				});
-			}
+			fs.stat(filePath, function(err, stats){
+				if(stats && stats.isFile()){
+					fs.readFile(filePath, {encoding: details.encoding || 'utf8'}, function(rerr, data){
+						if(rerr)
+							callback(rerr);
+						else
+							callback(null, data);
+					});
+				} else
+					callback(new Error(Utils.Strings.CHANGELOG_MISSING.replace('%s', details.changelogPath)));
+			});
 		}
 	});
 }
@@ -35,21 +36,22 @@ module.exports.getInterfaceVersion = function(details, callback){
 			callback(err);
 		else {
 			var filePath = path + '/' + details.path + '.toc';
-			if(!fs.existsSync(filePath))
-				callback(new Error(Utils.Strings.TOC_MISSING))
-			else {
-				fs.readFile(filePath, {encoding: details.encoding || 'utf8'}, function(err, data){
-					if(err)
-						callback(err);
-					else {
-						var interfaceVersion = data.match(/Interface: ?(.+)/);
-						if(!interfaceVersion)
-							callback(new Error(Utils.Strings.INTERFACE_VERSION_MISSING));
-						else
-							callback(null, interfaceVersion[1]);
-					}
-				});
-			}
+			fs.stat(filePath, function(err, stats){
+				if(stats && stats.isFile()){
+					fs.readFile(filePath, {encoding: details.encoding || 'utf8'}, function(rerr, data){
+						if(rerr)
+							callback(rerr);
+						else {
+							var interfaceVersion = data.match(/Interface: ?(.+)/);
+							if(!interfaceVersion)
+								callback(new Error(Utils.Strings.INTERFACE_VERSION_MISSING));
+							else
+								callback(null, interfaceVersion[1]);
+						}
+					});
+				} else
+					callback(new Error(Utils.Strings.TOC_MISSING));
+			});
 		}
 	});
 }
