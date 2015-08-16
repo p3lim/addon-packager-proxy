@@ -65,7 +65,7 @@ app.param('tag', regexParam('tag', /.+/));
 
 app.get('/updatelist', function(req, res){
 	fetchAddonList();
-	res.Send(Strings.FORCED_GIST_UPDATE_MESSAGE);
+	res.send(Strings.FORCED_GIST_UPDATE_MESSAGE);
 	Log.info(Strings.FORCED_GIST_UPDATE_MESSAGE);
 });
 
