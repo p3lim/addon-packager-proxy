@@ -41,8 +41,8 @@ function handleErrors(err, res, body){
 		return true;
 }
 
-var curseURL = 'http://wow.curseforge.com';
-var curseCDN = 'http://addons.cursecdn.com';
+var curseURL = 'https://wow.curseforge.com';
+var curseCDN = 'https://addons.cursecdn.com';
 
 function queryCurse(details, interval){
 	request(curseURL + '/addons/' + details.curse + '/files', function(err, res, body){
@@ -59,7 +59,7 @@ function queryCurse(details, interval){
 			if(!handleErrors(err, res))
 				return;
 
-			var filePath = body.match('http://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
+			var filePath = body.match('https://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
 			if(!filePath)
 				return Log.error(Strings.CURSE_FILE_NOT_FOUND);
 
