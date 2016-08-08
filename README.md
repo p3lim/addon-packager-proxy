@@ -32,7 +32,7 @@ Please see [this wiki article](//github.com/p3lim/addon-packager-proxy/wiki/Addo
 Click the purple deploy button below and follow the instructions on the screen.  
 When it's done deploying, visit [the wiki](//github.com/p3lim/addon-packager-proxy/wiki/Setup) to finish the setup.
 
-[![Deploy to Heroku](//www.herokucdn.com/deploy/button.png)](//heroku.com/deploy)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](//heroku.com/deploy)
 
 ## Legal
 
