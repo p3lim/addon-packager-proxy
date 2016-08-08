@@ -11,11 +11,8 @@
 		"SECRET_KEY": {
 			"description": "A secret key used for GitHub webhooks. Treat this like a password."
 		},
-		"WOWI_USERNAME": {
-			"description": "Your username on WowInterface.com."
-		},
-		"WOWI_PASSWORD": {
-			"description": "Your password on WowInterface.com."
+		"WOWI_API_TOKEN": {
+			"description": "Authentication token used to access the WoWInterface.com API. Generate one here: https://www.wowinterface.com/downloads/filecpl.php?action=apitokens"
 		},
 		"QUERY_MAX_ATTEMPTS": {
 			"description": "Number of attempts to query CurseForge for an updated file. Min: 2, Max: 10.",
