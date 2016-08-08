@@ -80,7 +80,7 @@ function queryCurse(details, interval){
 	});
 }
 
-var wowiAPI = 'http://api.wowinterface.com';
+var wowiAPI = 'https://api.wowinterface.com';
 
 function queryWowi(details, filePath){
 	var headers = {'X-API-Token': process.env.WOWI_API_TOKEN}
