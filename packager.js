@@ -6,8 +6,6 @@ var Utils = require('./utils'),
 	Log = new Utils.Log(),
 	Files = require('./files');
 
-var cookies = request.jar();
-
 var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
 var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
 
@@ -82,68 +80,53 @@ function queryCurse(details, interval){
 	});
 }
 
-var wowiLogin = 'https://secure.wowinterface.com/forums/login.php';
 var wowiAPI = 'http://api.wowinterface.com';
 
 function queryWowi(details, filePath){
-	request.post({
-		url: wowiLogin,
-		jar: cookies,
-		formData: {
-			'cookieuser': 1,
-			'vb_login_username': process.env.WOWI_USERNAME,
-			'vb_login_password': process.env.WOWI_PASSWORD,
-			'do': 'login'
-		}
-	}, function(err, res, body){
-		if(!handleErrors(err, res, body))
+	var headers = {'X-API-Token': process.env.WOWI_API_TOKEN}
+
+	request({
+		url: wowiAPI + '/addons/details/' + details.wowi + '.json',
+		headers: headers,
+		json: true
+	}, function(err, res, data){
+		if(!handleErrors(err, res, data))
 			return;
 
-		Log.info(Strings.AUTH_SUCCESSFUL);
+		var currentVersion = data[0].version;
+		if(details.tag == currentVersion)
+			return Log.info(Strings.ADDON_EXISTS.replace('%s', currentVersion));
 
-		request({
-			url: wowiAPI + '/addons/details/' + details.wowi + '.json',
-			jar: cookies,
-			json: true
-		}, function(err, res, data){
-			if(!handleErrors(err, res, data))
-				return;
+		Log.info(Strings.ADDON_DETAILS.replace('%s', currentVersion));
 
-			var currentVersion = data[0].version;
-			if(details.tag == currentVersion)
-				return Log.info(Strings.ADDON_EXISTS.replace('%s', currentVersion));
-
-			Log.info(Strings.ADDON_DETAILS.replace('%s', currentVersion));
-
-			var postData = {
-				url: wowiAPI + '/addons/update',
-				jar: cookies,
-				formData: {
-					id: +details.wowi,
-					version: details.tag,
-					updatefile: fs.createReadStream(filePath)
-				}
+		var postData = {
+			url: wowiAPI + '/addons/update',
+			headers: headers,
+			formData: {
+				id: +details.wowi,
+				version: details.tag,
+				updatefile: fs.createReadStream(filePath)
 			}
+		}
 
-			if(details.changelog){
-				if(!details.changelogPath)
-					details.changelogPath = 'CHANGELOG.md';
+		if(details.changelog){
+			if(!details.changelogPath)
+				details.changelogPath = 'CHANGELOG.md';
 
-				Log.info(Strings.CHANGELOG_FETCH.replace('%s', details.changelogPath));
+			Log.info(Strings.CHANGELOG_FETCH.replace('%s', details.changelogPath));
 
-				Files.fetchChangelog(details, function(err, data){
-					if(err)
-						return Log.error(err);
+			Files.fetchChangelog(details, function(err, data){
+				if(err)
+					return Log.error(err);
 
-					Log.info(Strings.CHANGELOG_FETCHED.replace('%s', details.changelogPath));
+				Log.info(Strings.CHANGELOG_FETCHED.replace('%s', details.changelogPath));
 
-					postData.formData.changelog = Files.formatChangelog(data);
+				postData.formData.changelog = Files.formatChangelog(data);
 
-					updateWowi(details, postData);
-				});
-			} else
 				updateWowi(details, postData);
-		});
+			});
+		} else
+			updateWowi(details, postData);
 	});
 }
 
