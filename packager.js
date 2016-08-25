@@ -33,7 +33,7 @@ module.exports = function(details, id, forced){
 function handleErrors(err, res, body){
 	if(err)
 		Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
-	else if(res && res.statusCode != 200)
+	else if(res && res.statusCode.toString()[0] != 2)
 		Log.error(Strings.RESPONSE_INCORRECT.replace('%s', res.request.uri.href).replace('%s', res.statusCode).replace('%s', body || 'null'));
 	else
 		return true;
