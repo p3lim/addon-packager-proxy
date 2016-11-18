@@ -33,50 +33,39 @@ module.exports = function(details, id, forced){
 function handleErrors(err, res, body){
 	if(err)
 		Log.error(Strings.CONNECTION_ERROR.replace('%s', res.request.uri.href));
-	else if(res && res.statusCode != 200)
+	else if(res && res.statusCode.toString()[0] != 2)
 		Log.error(Strings.RESPONSE_INCORRECT.replace('%s', res.request.uri.href).replace('%s', res.statusCode).replace('%s', body || 'null'));
 	else
 		return true;
 }
 
 var curseURL = 'https://wow.curseforge.com';
-var curseCDN = 'https://addons.cursecdn.com';
 
 function queryCurse(details, interval){
-	request(curseURL + '/addons/' + details.curse + '/files', function(err, res, body){
+	request(curseURL + '/projects/' + details.curse + '/files', function(err, res, body){
 		if(!handleErrors(err, res))
 			return;
 
-		var tagPath = body.match('(/addons/' + details.curse + '/files/.+/)">' + details.tag + '</a>');
-		if(!tagPath)
+		var fileID = body.match('/projects/' + details.curse + '/files/(.+)">' + details.tag + '</a>');
+		if(!fileID)
 			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
 
 		Log.info(Strings.CURSE_TAG_FOUND);
 
-		request(curseURL + tagPath[1], function(err, res, body){
-			if(!handleErrors(err, res))
+		var fileName = details.path + '-' + details.tag + '.zip'
+		request(curseURL + '/projects/' + details.curse + '/files/' + fileID[1] + '/download').on('response', function(res){
+			if(!handleErrors(null, res))
 				return;
 
-			var filePath = body.match('https://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
-			if(!filePath)
-				return Log.error(Strings.CURSE_FILE_NOT_FOUND);
+			Log.info(Strings.CURSE_FILE_DOWNLOADED);
 
-			Log.info(Strings.CURSE_FILE_FOUND);
+			if(interval)
+				clearInterval(interval);
 
-			request(curseCDN + filePath[1]).on('response', function(res){
-				if(!handleErrors(null, res))
-					return;
-
-				Log.info(Strings.CURSE_FILE_DOWNLOADED);
-
-				if(interval)
-					clearInterval(interval);
-
-				queryWowi(details, filePath[2]);
-			}).on('error', function(err){
-				handleErrors(err);
-			}).pipe(fs.createWriteStream(filePath[2]));
-		});
+			queryWowi(details, fileName);
+		}).on('error', function(err){
+			handleErrors(err);
+		}).pipe(fs.createWriteStream(fileName));
 	});
 }
 
@@ -135,15 +124,41 @@ function updateWowi(details, postData){
 		if(err)
 			return Log.error(err);
 
-		postData.formData.compatible = version.charAt(0) + '.' + version.charAt(2);
-
-		Log.info(Strings.ADDON_UPLOADING);
-
-		request.post(postData, function(err, res, body){
-			if(!handleErrors(err, res, body))
+		request({
+			url: wowiAPI + '/addons/compatible.json',
+			headers: postData.headers,
+			json: true
+		}, function(err, res, data){
+			if(!handleErrors(err, res, data))
 				return;
 
-			Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+			Log.info(Strings.COMPATIBLE_FETCHED);
+
+			var defaultID, id;
+			for(obj in data){
+				if(data[obj].default)
+					defaultID = data[obj].id;
+
+				if(data[obj].interface == version)
+					id = data[obj].id;
+			}
+
+			if(!id){
+				Log.info(Strings.COMPATIBLE_DEFAULT.replace('%s', version).replace('%s', defaultID));
+				id = defaultID;
+			} else
+				Log.info(Strings.COMPATIBLE.replace('%s', id).replace('%s', version));
+
+			postData.formData.compatible = id;
+
+			Log.info(Strings.ADDON_UPLOADING);
+
+			request.post(postData, function(err, res, body){
+				if(!handleErrors(err, res, body))
+					return;
+
+				Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+			});
 		});
 	});
 }

@@ -6,6 +6,7 @@ The tool (currently) has some very specific usage requirements:
 
 - The user needs to use [Git](//www.git-scm.com/).
 - The user needs to push to both GitHub and CurseForge repositories.
+  - Alternatively use [webhooks for CurseForge](https://www.curseforge.com/docs/packaging).
 - The user needs to use [Markdown](http://daringfireball.net/projects/markdown/) for changelogs.
   - Although changelogs are optional.
 

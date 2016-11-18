@@ -6,7 +6,6 @@ module.exports = {
 	'WEBHOOK_SIGN_MISMATCH': 'Signatures did not match.',
 	'WEBHOOK_SYNTAX_ERROR': 'Payload contained syntax errors.',
 	'WEBHOOK_PING_MESSAGE': 'Ping: %s',
-	'WEBHOOK_EVENT_MISMATCH': 'Invalid event "%s".',
 	'WEBHOOK_REF_MISMATCH': 'Invalid ref "%s".',
 	'WEBHOOK_REPO_MISMATCH': 'Repository "%s" is not tracked.',
 	'WEBHOOK_RECEIVED_MESSAGE': 'Received event for "%s" version "%s".',
@@ -33,16 +32,16 @@ module.exports = {
 	// CurseForge-specific
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',
 	'CURSE_TAG_NOT_FOUND': 'Could not find tag link on CurseForge.',
-	'CURSE_FILE_FOUND': 'Found file link on CurseForge.',
-	'CURSE_FILE_NOT_FOUND': 'Could not find file link on CurseForge.',
 	'CURSE_FILE_DOWNLOADED': 'Successfully downloaded file from CurseForge.',
 
 	// WowInterface-specific
-	'AUTH_SUCCESSFUL': 'Successfully authenticated with WowInterface.',
 	'ADDON_DETAILS': 'Found existing addon, previous version: "%s".',
 	'ADDON_EXISTS': 'Addon with version "%s" already exist.',
 	'ADDON_UPLOADING': 'Attempting to upload addon to WowInterface.',
 	'ADDON_UPLOADED': 'Addon "%s" version "%s" was successfully uploaded.',
+	'COMPATIBLE_FETCHED': 'Compatibility list sucessfully fetched.',
+	'COMPATIBLE_DEFAULT': 'Found no compatible id for "%s", defaulting to "%s".',
+	'COMPATIBLE': 'Found compatible id "%s" for "%s".',
 
 	// Misc
 	'CONNECTION_ERROR': 'Failed to connect to "%s".',
