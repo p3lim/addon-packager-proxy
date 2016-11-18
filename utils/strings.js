@@ -6,7 +6,6 @@ module.exports = {
 	'WEBHOOK_SIGN_MISMATCH': 'Signatures did not match.',
 	'WEBHOOK_SYNTAX_ERROR': 'Payload contained syntax errors.',
 	'WEBHOOK_PING_MESSAGE': 'Ping: %s',
-	'WEBHOOK_EVENT_MISMATCH': 'Invalid event "%s".',
 	'WEBHOOK_REF_MISMATCH': 'Invalid ref "%s".',
 	'WEBHOOK_REPO_MISMATCH': 'Repository "%s" is not tracked.',
 	'WEBHOOK_RECEIVED_MESSAGE': 'Received event for "%s" version "%s".',
@@ -36,7 +35,6 @@ module.exports = {
 	'CURSE_FILE_DOWNLOADED': 'Successfully downloaded file from CurseForge.',
 
 	// WowInterface-specific
-	'AUTH_SUCCESSFUL': 'Successfully authenticated with WowInterface.',
 	'ADDON_DETAILS': 'Found existing addon, previous version: "%s".',
 	'ADDON_EXISTS': 'Addon with version "%s" already exist.',
 	'ADDON_UPLOADING': 'Attempting to upload addon to WowInterface.',
