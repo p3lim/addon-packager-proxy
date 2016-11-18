@@ -124,15 +124,41 @@ function updateWowi(details, postData){
 		if(err)
 			return Log.error(err);
 
-		postData.formData.compatible = version.charAt(0) + '.' + version.charAt(2);
-
-		Log.info(Strings.ADDON_UPLOADING);
-
-		request.post(postData, function(err, res, body){
-			if(!handleErrors(err, res, body))
+		request({
+			url: wowiAPI + '/addons/compatible.json',
+			headers: postData.headers,
+			json: true
+		}, function(err, res, data){
+			if(!handleErrors(err, res, data))
 				return;
 
-			Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+			Log.info(Strings.COMPATIBLE_FETCHED);
+
+			var defaultID, id;
+			for(obj in data){
+				if(data[obj].default)
+					defaultID = data[obj].id;
+
+				if(data[obj].interface == version)
+					id = data[obj].id;
+			}
+
+			if(!id){
+				Log.info(Strings.COMPATIBLE_DEFAULT.replace('%s', version).replace('%s', defaultID));
+				id = defaultID;
+			} else
+				Log.info(Strings.COMPATIBLE.replace('%s', id).replace('%s', version));
+
+			postData.formData.compatible = id;
+
+			Log.info(Strings.ADDON_UPLOADING);
+
+			request.post(postData, function(err, res, body){
+				if(!handleErrors(err, res, body))
+					return;
+
+				Log.info(Strings.ADDON_UPLOADED.replace('%s', details.path).replace('%s', details.tag));
+			});
 		});
 	});
 }

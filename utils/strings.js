@@ -41,6 +41,9 @@ module.exports = {
 	'ADDON_EXISTS': 'Addon with version "%s" already exist.',
 	'ADDON_UPLOADING': 'Attempting to upload addon to WowInterface.',
 	'ADDON_UPLOADED': 'Addon "%s" version "%s" was successfully uploaded.',
+	'COMPATIBLE_FETCHED': 'Compatibility list sucessfully fetched.',
+	'COMPATIBLE_DEFAULT': 'Found no compatible id for "%s", defaulting to "%s".',
+	'COMPATIBLE': 'Found compatible id "%s" for "%s".',
 
 	// Misc
 	'CONNECTION_ERROR': 'Failed to connect to "%s".',
