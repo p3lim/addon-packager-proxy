@@ -40,43 +40,32 @@ function handleErrors(err, res, body){
 }
 
 var curseURL = 'https://wow.curseforge.com';
-var curseCDN = 'https://addons.cursecdn.com';
 
 function queryCurse(details, interval){
-	request(curseURL + '/addons/' + details.curse + '/files', function(err, res, body){
+	request(curseURL + '/projects/' + details.curse + '/files', function(err, res, body){
 		if(!handleErrors(err, res))
 			return;
 
-		var tagPath = body.match('(/addons/' + details.curse + '/files/.+/)">' + details.tag + '</a>');
-		if(!tagPath)
+		var fileID = body.match('/projects/' + details.curse + '/files/(.+)">' + details.tag + '</a>');
+		if(!fileID)
 			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
 
 		Log.info(Strings.CURSE_TAG_FOUND);
 
-		request(curseURL + tagPath[1], function(err, res, body){
-			if(!handleErrors(err, res))
+		var fileName = details.path + '-' + details.tag + '.zip'
+		request(curseURL + '/projects/' + details.curse + '/files/' + fileID[1] + '/download').on('response', function(res){
+			if(!handleErrors(null, res))
 				return;
 
-			var filePath = body.match('https://.+/media(/files/.+/.+/(.+\-' + details.tag + '.zip))');
-			if(!filePath)
-				return Log.error(Strings.CURSE_FILE_NOT_FOUND);
+			Log.info(Strings.CURSE_FILE_DOWNLOADED);
 
-			Log.info(Strings.CURSE_FILE_FOUND);
+			if(interval)
+				clearInterval(interval);
 
-			request(curseCDN + filePath[1]).on('response', function(res){
-				if(!handleErrors(null, res))
-					return;
-
-				Log.info(Strings.CURSE_FILE_DOWNLOADED);
-
-				if(interval)
-					clearInterval(interval);
-
-				queryWowi(details, filePath[2]);
-			}).on('error', function(err){
-				handleErrors(err);
-			}).pipe(fs.createWriteStream(filePath[2]));
-		});
+			queryWowi(details, fileName);
+		}).on('error', function(err){
+			handleErrors(err);
+		}).pipe(fs.createWriteStream(fileName));
 	});
 }
 

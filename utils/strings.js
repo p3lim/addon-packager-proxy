@@ -33,8 +33,6 @@ module.exports = {
 	// CurseForge-specific
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',
 	'CURSE_TAG_NOT_FOUND': 'Could not find tag link on CurseForge.',
-	'CURSE_FILE_FOUND': 'Found file link on CurseForge.',
-	'CURSE_FILE_NOT_FOUND': 'Could not find file link on CurseForge.',
 	'CURSE_FILE_DOWNLOADED': 'Successfully downloaded file from CurseForge.',
 
 	// WowInterface-specific
