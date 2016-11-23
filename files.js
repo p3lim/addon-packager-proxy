@@ -3,10 +3,8 @@ var fs = require('fs'),
 
 var Utils = require('./utils');
 
-var repo = 'git://git.curseforge.net/wow/%s/mainline.git';
-
 module.exports.fetchChangelog = function(details, callback){
-	Utils.Clone(repo.replace('%s', details.curse), details.curse, function(err, path){
+	Utils.Clone(details.github_repo, details.curse, function(err, path){
 		if(err)
 			callback(err);
 		else {
