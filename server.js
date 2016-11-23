@@ -151,6 +151,7 @@ app.post('/', function(req, res, next){
 
 	Log.info(Strings.WEBHOOK_RECEIVED_MESSAGE.replace('%s', name).replace('%s', res.payload.ref));
 
+	details.github_repo = res.payload.repository.git_url;
 	details.tag = res.payload.ref;
 	new Packager(details, ++workID);
 
