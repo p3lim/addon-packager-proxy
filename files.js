@@ -29,7 +29,7 @@ module.exports.formatChangelog = function(data){
 }
 
 module.exports.getInterfaceVersion = function(details, callback){
-	Utils.Clone(repo.replace('%s', details.curse), details.curse, function(err, path){
+	Utils.Clone(details.github_repo, details.curse, function(err, path){
 		if(err)
 			callback(err);
 		else {
