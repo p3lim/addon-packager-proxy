@@ -86,22 +86,23 @@ app.get('/force/:repo/:tag', function(req, res){
 });
 
 app.post('/', function(req, res, next){
-	if(!req.headers['x-github-delivery']){
-		res.status(400).end();
-		return Log.error(Strings.WEBHOOK_NO_DELIVERY);
-	}
-
-	var signature = req.headers['x-hub-signature'],
+	var secret, event, source;
+	if(req.headers['x-github-event']){
+		secret = req.headers['x-hub-signature'];
 		event = req.headers['x-github-event'];
-
-	if(!signature){
-		res.status(400).end();
-		return Log.error(Strings.WEBHOOK_NO_SECRET);
-	}
-
-	if(!event){
+		source = 'GitHub';
+	} else if(req.headers['x-gitlab-event']){
+		secret = req.headers['x-gitlab-token'];
+		event = req.headers['x-gitlab-event'];
+		source = 'GitLab';
+	} else {
 		res.status(400).end();
 		return Log.error(Strings.WEBHOOK_NO_EVENT);
+	}
+
+	if(!secret){
+		res.status(400).end();
+		return Log.error(Strings.WEBHOOK_NO_SECRET);
 	}
 
 	req.pipe(bl(function(err, data){
@@ -110,21 +111,30 @@ app.post('/', function(req, res, next){
 			return Log.error(Strings.ERROR_MESSAGE.replace('%s', 'Webhook').replace('%s', err.message));
 		}
 
-		if(!signatureMatch(signature, data)){
-			res.status(401).end();
-			return Log.error(Strings.WEBHOOK_SIGN_MISMATCH);
+		if(source === 'GitHub'){
+			if(!signatureMatch(secret, data, source)){
+				res.status(401).end();
+				return Log.error(Strings.WEBHOOK_SIGN_MISMATCH);
+			}
+		} else if(source === 'GitLab'){
+			// GitLab doesn't encrypt the signature :/
+			if(secret !== process.env.SECRET_KEY){
+				res.status(401).end();
+				return Log.error(Strings.WEBHOOK_SIGN_MISMATCH);
+			}
 		}
 
 		try {
 			res.payload = JSON.parse(data.toString());
 		} catch(err){
-			res.status(400).end();
+			res.status(400).end()
 			return Log.error(Strings.WEBHOOK_SYNTAX_ERROR);
 		}
 
 		res.event = event;
+		res.source = source;
 
-		next();
+		next()
 	}));
 }, function(req, res){
 	if(res.event === 'ping'){
@@ -132,17 +142,32 @@ app.post('/', function(req, res, next){
 		return Log.info(Strings.WEBHOOK_PING_MESSAGE.replace('%s', res.payload.zen));
 	}
 
-	if(res.event !== 'create'){
-		res.status(204).end();
-		return;
+	var name, source, tag;
+	if(res.source === 'GitHub'){
+		if(res.event !== 'create'){
+			res.status(204).end();
+			return;
+		}
+
+		if(res.payload.ref_type !== 'tag'){
+			res.status(204).end();
+			return Log.info(Strings.WEBHOOK_REF_MISMATCH.replace('%s', res.payload.ref_type));
+		}
+
+		name = res.payload.repository.name;
+		source = res.payload.repository.git_url;
+		tag = res.payload.ref;
+	} else if(res.source === 'GitLab'){
+		if(res.event !== 'Tag Push Hook'){
+			res.status(204).end();
+			return Log.info(Strings.WEBHOOK_REF_MISMATCH.replace('%s', res.event));
+		}
+
+		name = res.payload.project.name;
+		source = res.payload.project.git_ssh_url;
+		tag = res.payload.ref.split('/').pop();
 	}
 
-	if(res.payload.ref_type !== 'tag'){
-		res.status(204).end();
-		return Log.info(Strings.WEBHOOK_REF_MISMATCH.replace('%s', res.payload.ref_type));
-	}
-
-	var name = res.payload.repository.name;
 	var details = projects[name];
 	if(!details){
 		res.status(204).end();
@@ -151,14 +176,14 @@ app.post('/', function(req, res, next){
 
 	Log.info(Strings.WEBHOOK_RECEIVED_MESSAGE.replace('%s', name).replace('%s', res.payload.ref));
 
-	details.github_repo = res.payload.repository.git_url;
-	details.tag = res.payload.ref;
+	details.source = source;
+	details.tag = tag;
 	new Packager(details, ++workID);
 
 	res.status(202).end();
 });
 
-function signatureMatch(signature, data){
+function signatureMatch(signature, data, source){
 	var computed = 'sha1=' + crypto.createHmac('sha1', process.env.SECRET_KEY).update(data).digest('hex');
 	if(computed === signature)
 		return true;
