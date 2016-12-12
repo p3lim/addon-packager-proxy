@@ -92,9 +92,13 @@ app.post('/', function(req, res, next){
 		event = req.headers['x-github-event'];
 		source = 'GitHub';
 	} else if(req.headers['x-gitlab-event']){
-		secret = req.headers['x-gitlab-token'];
+		secret = req.headers['x-gitlab-token']; // plain text
 		event = req.headers['x-gitlab-event'];
 		source = 'GitLab';
+	} else if(req.headers['x-event-key']){
+		secret = ''; // no secret
+		event = req.headers['x-event-key'];
+		source = 'Bitbucket'
 	} else {
 		res.status(400).end();
 		return Log.error(Strings.WEBHOOK_NO_EVENT);
@@ -166,6 +170,15 @@ app.post('/', function(req, res, next){
 		name = res.payload.project.name;
 		source = res.payload.project.git_ssh_url;
 		tag = res.payload.ref.split('/').pop();
+	} else if(res.source === 'Bitbucket'){
+		if(res.event !== 'repo:push' || res.payload.push.changes[0].new.type === 'tag'){
+			res.status(204).end();
+			return Log.info(Strings.WEBHOOK_REF_MISMATCH.replace('%s', res.event + '-' + res.payload.push.changes[0].new.type))
+		}
+
+		name = res.payload.repository.name;
+		source = 'https://bitbucket.org/' + res.payload.repository.full_name;
+		tag = res.payload.push.changes[0].new.name;
 	}
 
 	var details = projects[name];
