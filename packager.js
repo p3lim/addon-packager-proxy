@@ -39,7 +39,7 @@ function handleErrors(err, res, body){
 		return true;
 }
 
-var curseURL = 'https://wow.curseforge.com';
+var curseURL = process.env.CURSE_URL || 'https://wow.curseforge.com';
 
 function queryCurse(details, interval){
 	request(curseURL + '/projects/' + details.curse + '/files', function(err, res, body){
