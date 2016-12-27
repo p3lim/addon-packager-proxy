@@ -11,7 +11,8 @@
 		"bl": "1.0.x",
 		"express": "4.11.x",
 		"request": "2.51.x",
-		"markdown": "0.5.x"
+		"markdown": "0.5.x",
+		"adm-zip": "0.4.x"
 	},
 	"engines": {
 		"node": "0.12.x",

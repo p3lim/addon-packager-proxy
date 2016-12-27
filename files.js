@@ -1,9 +1,11 @@
 var fs = require('fs'),
+	zip = require('adm-zip'),
 	markdown = require('markdown').markdown;
 
 var Utils = require('./utils');
 
 module.exports.fetchChangelog = function(details, callback){
+/*
 	Utils.Clone(details.github_repo, details.curse, function(err, path){
 		if(err)
 			callback(err);
@@ -22,6 +24,14 @@ module.exports.fetchChangelog = function(details, callback){
 			});
 		}
 	});
+*/
+
+	var archive = new zip(details.path + '-' + details.tag + '.zip');
+	var file = archive.getEntry(details.path + '/' + (details.changelogPath || 'CHANGELOG.md'));
+	if(file)
+		callback(null, archive.readAsText(file));
+	else
+		callback(new Error(Utils.Strings.CHANGELOG_MISSING.replace('%s', details.changelogPath)));
 }
 
 module.exports.formatChangelog = function(data){
@@ -29,6 +39,7 @@ module.exports.formatChangelog = function(data){
 }
 
 module.exports.getInterfaceVersion = function(details, callback){
+/*
 	Utils.Clone(details.github_repo, details.curse, function(err, path){
 		if(err)
 			callback(err);
@@ -52,4 +63,18 @@ module.exports.getInterfaceVersion = function(details, callback){
 			});
 		}
 	});
+*/
+
+	var archive = new zip(details.path + '-' + details.tag + '.zip');
+	var file = archive.getEntry(details.path + '/' + details.path + '.toc');
+	if(file){
+		var contents = archive.readAsText(file);
+
+		var interfaceVersion = contents.match(/Interface: ?(.+)/);
+		if(!interfaceVersion)
+			callback(new Error(Utils.Strings.INTERFACE_VERSION_MISSING));
+		else
+			callback(null, interfaceVersion[1]);
+	} else
+		callback(new Error(Utils.Strings.TOC_MISSING));
 }
