@@ -8,15 +8,15 @@
 		"start": "node server.js"
 	},
 	"dependencies": {
-		"bl": "1.0.x",
-		"express": "4.11.x",
-		"request": "2.51.x",
+		"bl": "1.2.x",
+		"express": "4.15.x",
+		"request": "2.81.x",
 		"markdown": "0.5.x",
 		"adm-zip": "0.4.x"
 	},
 	"engines": {
-		"node": "0.12.x",
-		"npm": "3.1.x"
+		"node": "6.10.x",
+		"npm": "3.10.x"
 	},
 	"repository": {
 		"type": "git",
