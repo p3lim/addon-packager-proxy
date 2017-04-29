@@ -42,11 +42,19 @@ function handleErrors(err, res, body){
 		return true;
 }
 
-var curseURL = process.env.CURSE_URL || 'https://wow.curseforge.com';
+var curseURL = 'https://wow.curseforge.com';
 
 function queryCurse(details, interval){
+	Log.info(Strings.CURSE_ATTEMPT);
+
 	request(curseURL + '/projects/' + details.curse + '/files', function(err, res, body){
-		if(!handleErrors(err, res))
+		if(res.statusCode == 404){
+			Log.error(Strings.CURSE_FAIL);
+			queryWowace(details, interval);
+			return;
+		}
+
+		if(!handleErrors(null, res))
 			return;
 
 		var dom = new JSDOM(body);
@@ -54,27 +62,60 @@ function queryCurse(details, interval){
 		if(!el)
 			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
 
-		var fileID = el.getAttribute('data-id');
+		fileID = el.getAttribute('data-id');
 		if(!fileID)
 			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
 
 		Log.info(Strings.CURSE_TAG_FOUND);
-
-		var fileName = details.path + '-' + details.tag + '.zip'
-		request(curseURL + el.href + '/download').on('response', function(res){
-			if(!handleErrors(null, res))
-				return;
-
-			Log.info(Strings.CURSE_FILE_DOWNLOADED);
-
-			if(interval)
-				clearInterval(interval);
-
-			queryWowi(details, fileName);
-		}).on('error', function(err){
-			handleErrors(err);
-		}).pipe(fs.createWriteStream(fileName));
+		downloadCurse(details, curseURL + el.href, interval);
 	});
+}
+
+var wowaceURL = 'https://www.wowace.com';
+
+function queryWowace(details, interval){
+	Log.info(Strings.WOWACE_ATTEMPT);
+
+	request(wowaceURL + '/projects/' + details.curse + '/files', function(err, res, body){
+		if(res.statusCode == 404){
+			Log.error(Strings.WOWACE_FAIL);
+			return;
+		}
+
+		if(!handleErrors(null, res))
+			return;
+
+		var dom = new JSDOM(body);
+		var el = dom.window.document.querySelector('.overflow-tip[data-name="' + details.tag + '"]');
+		if(!el)
+			return Log.error(Strings.WOWACE_TAG_NOT_FOUND);
+
+		fileID = el.getAttribute('data-id');
+		if(!fileID)
+			return Log.error(Strings.WOWACE_TAG_NOT_FOUND);
+
+		Log.info(Strings.WOWACE_TAG_FOUND);
+		downloadCurse(details, wowaceURL + el.href, interval);
+	});
+}
+
+function downloadCurse(details, url, interval){
+	Log.info(Strings.CURSE_FILE_ATTEMPT);
+
+	var fileName = details.path + '-' + details.tag + '.zip'
+	request(url + '/download').on('response', function(res){
+		if(!handleErrors(null, res))
+			return;
+
+		Log.info(Strings.CURSE_FILE_DOWNLOADED);
+
+		if(interval)
+			clearInterval(interval);
+
+		queryWowi(details, fileName);
+	}).on('error', function(err){
+		handleErrors(err);
+	}).pipe(fs.createWriteStream(fileName));
 }
 
 var wowiAPI = 'https://api.wowinterface.com';

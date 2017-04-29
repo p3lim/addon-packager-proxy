@@ -30,9 +30,20 @@ module.exports = {
 	'INTERFACE_VERSION_MISSING': 'Toc file does not contain an Interface version.',
 
 	// CurseForge-specific
+	'CURSE_ATTEMPT': 'Attempting to find file on CurseForge.',
+	'CURSE_FAIL': 'Failed to find file on CurseForge.',
 	'CURSE_TAG_FOUND': 'Found tag link on CurseForge.',
 	'CURSE_TAG_NOT_FOUND': 'Could not find tag link on CurseForge.',
-	'CURSE_FILE_DOWNLOADED': 'Successfully downloaded file from CurseForge.',
+
+	// WowAce-specific
+	'WOWACE_ATTEMPT': 'Attempting to find file on WowAce.',
+	'WOWACE_FAIL': 'Failed to find file on WowAce.',
+	'WOWACE_TAG_FOUND': 'Found tag link on WowAce.',
+	'WOWACE_TAG_NOT_FOUND': 'Could not find tag link on WowAce.',
+
+	// Curse-network-specific
+	'CURSE_FILE_ATTEMPT': 'Attempting to download file.',
+	'CURSE_FILE_DOWNLOADED': 'Successfully downloaded file.',
 
 	// WowInterface-specific
 	'ADDON_DETAILS': 'Found existing addon, previous version: "%s".',
