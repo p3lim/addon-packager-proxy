@@ -1,5 +1,8 @@
 var fs = require('fs'),
-	request = require('request');
+	request = require('request'),
+	jsdom = require('jsdom');
+
+const { JSDOM } = jsdom;
 
 var Utils = require('./utils'),
 	Strings = Utils.Strings,
@@ -46,14 +49,19 @@ function queryCurse(details, interval){
 		if(!handleErrors(err, res))
 			return;
 
-		var fileID = body.match('/projects/' + details.curse + '/files/(.+)">' + details.tag + '</a>');
+		var dom = new JSDOM(body);
+		var el = dom.window.document.querySelector('.overflow-tip[data-name="' + details.tag + '"]');
+		if(!el)
+			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
+
+		var fileID = el.getAttribute('data-id');
 		if(!fileID)
 			return Log.error(Strings.CURSE_TAG_NOT_FOUND);
 
 		Log.info(Strings.CURSE_TAG_FOUND);
 
 		var fileName = details.path + '-' + details.tag + '.zip'
-		request(curseURL + '/projects/' + details.curse + '/files/' + fileID[1] + '/download').on('response', function(res){
+		request(curseURL + el.href + '/download').on('response', function(res){
 			if(!handleErrors(null, res))
 				return;
 

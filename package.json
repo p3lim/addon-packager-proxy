@@ -12,7 +12,8 @@
 		"express": "4.15.x",
 		"request": "2.81.x",
 		"markdown": "0.5.x",
-		"adm-zip": "0.4.x"
+		"adm-zip": "0.4.x",
+		"jsdom": "10.0.x"
 	},
 	"engines": {
 		"node": "6.10.x",
