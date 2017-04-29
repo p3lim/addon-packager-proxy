@@ -9,8 +9,8 @@ var Utils = require('./utils'),
 	Log = new Utils.Log(),
 	Files = require('./files');
 
-var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS, 10), 2);
-var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS, 300), 30);
+var queryMaxAttempts = Math.max(Math.min(+process.env.QUERY_MAX_ATTEMPTS || 3, 10), 2);
+var queryDelaySeconds = Math.max(Math.min(+process.env.QUERY_DELAY_SECONDS || 60, 300), 30);
 
 module.exports = function(details, id, forced){
 	Log.setID(id);
